@@ -42,7 +42,7 @@ public class Graph_Algo implements graph_algorithms {
 
 
         node_data current = nodes.iterator().next();
-        //open.add(current);
+        open.add(current);
 
         while (open.size() > 0){
             current = open.remove(0);
@@ -68,10 +68,13 @@ public class Graph_Algo implements graph_algorithms {
         PathNode current = FindShortestPath(src, dest);
         if(current != null){
             int distance = 0;
+            System.out.println("????");
             while (current != null){
+                //System.out.println(current.getKey());
                 if(current.getKey() == src){
                     break;
                 }
+                current = current.getParent();
                 distance++;
             }
             return distance;
@@ -93,7 +96,8 @@ public class Graph_Algo implements graph_algorithms {
             }
             return path;
         }
-        return null;
+        System.out.println("No path");
+        return new ArrayList<>();
     }
 
     public PathNode FindShortestPath(int src, int dest){
@@ -114,6 +118,8 @@ public class Graph_Algo implements graph_algorithms {
         open.add(new PathNode(source));
         while (open.size() > 0){
             PathNode current = open.remove(0);
+            closed.add(current.getKey());
+            System.out.println(current.getNode());
 
             if(current.getKey() == dest){
                 return current;
