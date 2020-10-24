@@ -29,7 +29,7 @@ public interface graph_algorithms {
  * other node. NOTE: assume undirectional graph.
  * @return
  */
-	boolean isConnected();
+	boolean isConnected(int i);
 	/**
 	 * returns the length of the shortest path between src to dest
 	 * @param src - start node

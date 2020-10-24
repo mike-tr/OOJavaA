@@ -1,11 +1,9 @@
 package com.company;
 
-import com.sun.javafx.sg.prism.NodePath;
 import ex0.graph;
 import ex0.graph_algorithms;
 import ex0.node_data;
 
-import java.nio.file.Path;
 import java.util.*;
 
 public class Graph_Algo implements graph_algorithms {
@@ -30,7 +28,89 @@ public class Graph_Algo implements graph_algorithms {
     }
 
     @Override
-    public boolean isConnected() {
+    public boolean isConnected(int i) {
+        if(i == 0){
+            return isConnected1();
+        }
+        return isConnected2();
+    }
+
+    public boolean isConnected1() {
+        // this method is Very slow if the number of edges is low
+        // on the drop side it becomes fast with more edges
+        // at about *5 edges then nodes it is much faster then the other approach
+        HashSet<node_data> nodes = new HashSet<>();
+        nodes.addAll(data.getV());
+        if(nodes.size() < 2){
+            return true;
+        }
+
+        ArrayList<node_data> open = new ArrayList<>();
+        HashSet<node_data> closed = new HashSet<>();
+
+
+
+        node_data current = nodes.iterator().next();
+        nodes.remove(current);
+        open.add(current);
+
+        while (open.size() > 0){
+            current = open.remove(0);
+            closed = new HashSet<>();
+            if(nodes.size() <= 0){
+                return true;
+            }
+
+            for (node_data node : nodes){
+                if(current.hasNi(node.getKey())){
+                    closed.add(node);
+                    open.add(node);
+                }
+            }
+            nodes.removeAll(closed);
+        }
+
+        return false;
+    }
+
+    public boolean isConnected2() {
+        // this method Is VERY VERY SLOW as the number of edges is increased
+        // probably about e^2 * n complexity if not worse.
+        Collection<node_data> nodes = data.getV();
+        if(nodes.size() < 2){
+            return true;
+        }
+
+        ArrayList<node_data> open = new ArrayList<>();
+        HashSet<node_data> closed = new HashSet<>();
+
+
+
+        node_data current = nodes.iterator().next();
+        open.add(current);
+
+        while (open.size() > 0){
+            current = open.remove(0);
+            closed.add(current);
+
+            if(closed.size() >= data.nodeSize()){
+                return true;
+            }
+
+            for (node_data node: current.getNi()) {
+                if(open.contains(node) || closed.contains(node)){
+                    continue;
+                }
+                open.add(node);
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isConnected3() {
+        // this method Is VERY VERY SLOW as the number of edges is increased
+        // probably about e^2 * n complexity if not worse.
         Collection<node_data> nodes = data.getV();
         if(nodes.size() < 2){
             return true;
@@ -68,9 +148,7 @@ public class Graph_Algo implements graph_algorithms {
         PathNode current = FindShortestPath(src, dest);
         if(current != null){
             int distance = 0;
-            System.out.println("????");
             while (current != null){
-                //System.out.println(current.getKey());
                 if(current.getKey() == src){
                     break;
                 }
@@ -119,7 +197,6 @@ public class Graph_Algo implements graph_algorithms {
         while (open.size() > 0){
             PathNode current = open.remove(0);
             closed.add(current.getKey());
-            System.out.println(current.getNode());
 
             if(current.getKey() == dest){
                 return current;
