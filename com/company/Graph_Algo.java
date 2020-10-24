@@ -9,6 +9,10 @@ import java.util.*;
 public class Graph_Algo implements graph_algorithms {
     private graph data;
 
+    public Graph_Algo(){
+
+    }
+
     public Graph_Algo(graph g){
         init(g);
     }
@@ -29,15 +33,17 @@ public class Graph_Algo implements graph_algorithms {
 
 
     public boolean isConnectedt(int i) {
-        if(i <= 1){
-            return isConnected1();
-        }else if(i == 2) {
-            return isConnected2();
-        }
-        return isConnected();
+//        if(i <= 1){
+//            return isConnected1();
+//        }else if(i == 2) {
+//            return isConnected2();
+//        }
+//        return isConnected();
+        return false;
     }
 
-    public boolean isConnected1() {
+
+    public boolean isConnected3() {
         // this method is Very slow if the number of edges is low
         // on the drop side it becomes fast with more edges
         // at about *5 edges then nodes it is much faster then the other approach
@@ -75,7 +81,8 @@ public class Graph_Algo implements graph_algorithms {
         return false;
     }
 
-    public boolean isConnected2() {
+    //@Override
+    public boolean isConnected31() {
         // this method Is VERY VERY SLOW as the number of edges is increased
         // probably about e^2 * n complexity if not worse.
         Collection<node_data> nodes = data.getV();
@@ -148,9 +155,9 @@ public class Graph_Algo implements graph_algorithms {
                 return true;
             }
 
-            for (node_data node: current.getNi()) {
+            for (node_data node : current.getNi()) {
                 //if(!open.contains(node) && !closed.contains(node)){
-                if(nodes.contains(node)){
+                if (nodes.contains(node)) {
                     open.add(node);
                     nodes.remove(node);
                 }
@@ -174,7 +181,7 @@ public class Graph_Algo implements graph_algorithms {
             }
             return distance;
         }
-        return Integer.MAX_VALUE;
+        return -1;
     }
 
     @Override
