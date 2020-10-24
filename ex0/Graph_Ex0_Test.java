@@ -14,15 +14,14 @@ import java.util.Random;
 public class Graph_Ex0_Test {
     static int seed = 31;
     static Random _rnd = new Random(seed);
-    static int v_size = 40000;
-    static int e_size = (int)(v_size * 15);
+    static int v_size = 200000;
+    static int e_size = (int)(v_size * 3);
     static graph g0 = new Graph_DS(), g1;
     static graph_algorithms ga;
     public static void main(String[] args) {
-        System.out.println("wtf");
         test1();
         System.out.println(g0);
-        //test2();
+        test2();
         System.out.println(g0);
         test3();
         System.out.println(g0);
@@ -40,7 +39,6 @@ public class Graph_Ex0_Test {
             g0.connect(a,b);
             j++;
         }
-        System.out.println(j);
        // System.out.println(g0);
     }
     public static void test2() {
@@ -59,29 +57,27 @@ public class Graph_Ex0_Test {
         ga.init(g1);
         System.out.println(g1);
         long start = System.currentTimeMillis();
-        boolean isConnected = ga.isConnected(0);
+        boolean isConnected = ga.isConnected();
 
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
         System.out.println("Is connected: "+isConnected + " : " + timeElapsed);
 
         start = System.currentTimeMillis();
-        boolean isConnected2 = ga.isConnected(1);
-
+        int dist19 = ga.shortestPathDist(1,9);
         finish = System.currentTimeMillis();
         long timeElapsed2 = finish - start;
+        System.out.println("shortest path: 1,9 dist="+dist19 + " time : " + timeElapsed2);
 
-        System.out.println("Is connected2: "+isConnected2 + " : " + timeElapsed2);
-        int dist19 = ga.shortestPathDist(1,9);
         int dist91 = ga.shortestPathDist(9,1);
         List<node_data> sp = ga.shortestPath(1,9);
         System.out.println(g1);
         System.out.println("Is connected: "+isConnected + " : " + timeElapsed);
         System.out.println("shortest path: 1,9 dist="+dist19);
         System.out.println("shortest path: 9,1 dist="+dist91);
-//        for (int i=0;i<sp.size();i++) {
-//            System.out.println(" "+sp.get(i));
-//        }
+        for (int i=0;i<sp.size();i++) {
+            System.out.println(" "+sp.get(i));
+        }
     }
     public static int nextRnd(int min, int max) {
         double v = nextRnd(0.0+min, (double)max);

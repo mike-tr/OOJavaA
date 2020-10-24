@@ -27,12 +27,14 @@ public class Graph_Algo implements graph_algorithms {
         return null;
     }
 
-    @Override
-    public boolean isConnected(int i) {
-        if(i == 0){
+
+    public boolean isConnectedt(int i) {
+        if(i <= 1){
             return isConnected1();
+        }else if(i == 2) {
+            return isConnected2();
         }
-        return isConnected2();
+        return isConnected();
     }
 
     public boolean isConnected1() {
@@ -108,10 +110,23 @@ public class Graph_Algo implements graph_algorithms {
         return false;
     }
 
-    public boolean isConnected3() {
-        // this method Is VERY VERY SLOW as the number of edges is increased
-        // probably about e^2 * n complexity if not worse.
-        Collection<node_data> nodes = data.getV();
+    @Override
+    public boolean isConnected() {
+        // tried 3 different methods and this is the best!
+        // by far outperform every other method,
+        // it comibens both ideas,
+        // we get the list off all nodes
+        // then we pick 1 as starting node,
+        // and subtract all its neighbours, from the total nodes.
+        // we also add the subtracted node to a list of check nodes.
+        // we repeat agaim, for every node in the list
+
+        // at worst case we iterated the whole list so we got n runs
+        // then we check if any of the neighbors is in the list, so its n*(average neighbours count)
+        // but we would also finish if the total list is now empty.
+
+        HashSet<node_data> nodes = new HashSet<>();
+        nodes.addAll(data.getV());
         if(nodes.size() < 2){
             return true;
         }
@@ -122,21 +137,23 @@ public class Graph_Algo implements graph_algorithms {
 
 
         node_data current = nodes.iterator().next();
+        nodes.remove(current);
         open.add(current);
 
         while (open.size() > 0){
             current = open.remove(0);
             closed.add(current);
 
-            if(closed.size() >= data.nodeSize()){
+            if(nodes.size() <= 0){
                 return true;
             }
 
             for (node_data node: current.getNi()) {
-                if(open.contains(node) || closed.contains(node)){
-                    continue;
+                //if(!open.contains(node) && !closed.contains(node)){
+                if(nodes.contains(node)){
+                    open.add(node);
+                    nodes.remove(node);
                 }
-                open.add(node);
             }
         }
 
@@ -209,6 +226,10 @@ public class Graph_Algo implements graph_algorithms {
                 if(closed.contains(node.getKey())){
                     continue;
                 }
+                if(node.getKey() == dest){
+                    return new PathNode(node, current);
+                }
+
                 PathNode cpath = hashed.get(node);
                 if(cpath != null){
                     cpath.tryNewPath(current);
@@ -218,7 +239,6 @@ public class Graph_Algo implements graph_algorithms {
                     hashed.put(node, cpath);
                 }
             }
-
         }
         return null;
     }

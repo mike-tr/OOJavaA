@@ -16,8 +16,7 @@ public class Graph_DS implements CopyableGraph {
     }
 
     public Graph_DS(Graph_DS graph){
-
-        HashMap<node_data, node_data> copies = new HashMap<>();
+        //HashMap<node_data, node_data> copies = new HashMap<>();
         for (node_data node: graph.getV()) {
             node_data copy;
             if(node instanceof CopyableNode){
@@ -26,15 +25,15 @@ public class Graph_DS implements CopyableGraph {
                 copy = new NodeData(node);
             }
             addNode(copy);
-            copies.put(node, copy);
+            //copies.put(node, copy);
         }
 
-
         for (node_data node: graph.getV()) {
-            node_data copy = copies.get(node);
+            //node_data copy = copies.get(node);
+
             for(node_data ni: node.getNi()){
-                node_data copy_ni = copies.get(ni);
-                connect(copy.getKey(),copy_ni.getKey());
+                //node_data copy_ni = copies.get(ni);
+                connect(node.getKey(), ni.getKey());
             }
         }
         if(this.numEdges != graph.numEdges){

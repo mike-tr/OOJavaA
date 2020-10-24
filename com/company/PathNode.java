@@ -23,6 +23,7 @@ public class PathNode implements Comparable<PathNode> {
 
     public boolean tryNewPath(PathNode neighbour){
         if(distance > neighbour.distance + 1){
+            System.out.println("from : " + distance + " to " + neighbour.distance + 1);
             distance = neighbour.distance + 1;
             this.neighbour = neighbour;
             return true;
