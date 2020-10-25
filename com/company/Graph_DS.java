@@ -17,6 +17,7 @@ public class Graph_DS implements CopyableGraph {
 
     public Graph_DS(Graph_DS graph){
         //HashMap<node_data, node_data> copies = new HashMap<>();
+       // Collection<node_data> originalNodes = graph.getV();
         for (node_data node: graph.getV()) {
             node_data copy;
             if(node instanceof CopyableNode){
@@ -29,11 +30,11 @@ public class Graph_DS implements CopyableGraph {
         }
 
         for (node_data node: graph.getV()) {
+            int k = node.getKey();
             //node_data copy = copies.get(node);
-
             for(node_data ni: node.getNi()){
                 //node_data copy_ni = copies.get(ni);
-                connect(node.getKey(), ni.getKey());
+                connect(k, ni.getKey());
             }
         }
         if(this.numEdges != graph.numEdges){
@@ -110,6 +111,7 @@ public class Graph_DS implements CopyableGraph {
 
     @Override
     public Collection<node_data> getV() {
+        //return nodes.values();
         return values;
     }
 
@@ -126,9 +128,15 @@ public class Graph_DS implements CopyableGraph {
     public node_data removeNode(int key) {
         node_data node = getNode(key);
         if(node != null){
-            for (int n: nodes.keySet()) {
-                removeEdge(key, n);
+            HashSet<Integer> keys = new HashSet<>();
+            for (node_data ni: node.getNi()) {
+                keys.add(ni.getKey());
             }
+
+            for (Integer nkey: keys) {
+                removeEdge(key, nkey);
+            }
+
             values.remove(node);
             nodes.remove(key);
 

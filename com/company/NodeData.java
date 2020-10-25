@@ -3,12 +3,13 @@ package com.company;
 import ex0.node_data;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class NodeData implements CopyableNode {
     private static int nextID;
     private int key;
-    private HashSet<node_data> neighbors = new HashSet<>();
+    private HashMap<Integer, node_data> neighbors = new HashMap<>();
     private String info;
     private int tag;
 
@@ -60,20 +61,22 @@ public class NodeData implements CopyableNode {
 
     @Override
     public Collection<node_data> getNi() {
-        return neighbors;
+        return neighbors.values();
     }
 
     @Override
     public boolean hasNi(int key) {
-        return neighbors.contains(new NodeData(key));
+        return neighbors.containsKey(key);
+        //return neighbors.contains(new NodeData(key));
     }
 
     @Override
     public void addNi(node_data t) {
-        if(t.equals(this) || neighbors.contains(t)){
+        if(t.equals(this) || hasNi(t.getKey())){
             return;
         }
-        neighbors.add(t);
+        //neighbors.add(t);
+        neighbors.put(t.getKey(), t);
     }
 
     @Override

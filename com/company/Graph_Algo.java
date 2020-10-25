@@ -42,83 +42,52 @@ public class Graph_Algo implements graph_algorithms {
         return false;
     }
 
-
-    public boolean isConnected3() {
-        // this method is Very slow if the number of edges is low
-        // on the drop side it becomes fast with more edges
-        // at about *5 edges then nodes it is much faster then the other approach
-        HashSet<node_data> nodes = new HashSet<>();
-        nodes.addAll(data.getV());
-        if(nodes.size() < 2){
-            return true;
-        }
-
-        ArrayList<node_data> open = new ArrayList<>();
-        HashSet<node_data> closed = new HashSet<>();
-
-
-
-        node_data current = nodes.iterator().next();
-        nodes.remove(current);
-        open.add(current);
-
-        while (open.size() > 0){
-            current = open.remove(0);
-            closed = new HashSet<>();
-            if(nodes.size() <= 0){
-                return true;
-            }
-
-            for (node_data node : nodes){
-                if(current.hasNi(node.getKey())){
-                    closed.add(node);
-                    open.add(node);
-                }
-            }
-            nodes.removeAll(closed);
-        }
-
-        return false;
+    @Override
+    public boolean isConnected() {
+        //boolean d = isConnectedBF();
+        //System.out.println(d);
+        //return isConnectedRemovalApproach();
+        return isConnectedBF();
     }
 
-    //@Override
-    public boolean isConnected31() {
-        // this method Is VERY VERY SLOW as the number of edges is increased
-        // probably about e^2 * n complexity if not worse.
+    public boolean isConnectedBF() {
         Collection<node_data> nodes = data.getV();
         if(nodes.size() < 2){
             return true;
         }
 
+        for (node_data node: nodes) {
+            node.setTag(-1);
+        }
+
         ArrayList<node_data> open = new ArrayList<>();
-        HashSet<node_data> closed = new HashSet<>();
-
-
-
         node_data current = nodes.iterator().next();
+        current.setTag(0);
         open.add(current);
+
+        int max = nodes.size() - 1;
 
         while (open.size() > 0){
             current = open.remove(0);
-            closed.add(current);
 
-            if(closed.size() >= data.nodeSize()){
-                return true;
+            for (node_data node : current.getNi()) {
+                //if(!open.contains(node) && !closed.contains(node)){
+                if(node.getTag() < 0){
+                    node.setTag(0);
+                    open.add(node);
+                    max--;
+                }
             }
 
-            for (node_data node: current.getNi()) {
-                if(open.contains(node) || closed.contains(node)){
-                    continue;
-                }
-                open.add(node);
+            if(max <= 0){
+                return true;
             }
         }
 
         return false;
     }
 
-    @Override
-    public boolean isConnected() {
+    public boolean isConnectedRemovalApproach() {
         // tried 3 different methods and this is the best!
         // by far outperform every other method,
         // it comibens both ideas,
@@ -132,14 +101,14 @@ public class Graph_Algo implements graph_algorithms {
         // then we check if any of the neighbors is in the list, so its n*(average neighbours count)
         // but we would also finish if the total list is now empty.
 
-        HashSet<node_data> nodes = new HashSet<>();
-        nodes.addAll(data.getV());
+        HashSet<node_data> nodes = new HashSet<>(data.getV());
+        //nodes.addAll(data.getV());
         if(nodes.size() < 2){
             return true;
         }
 
         ArrayList<node_data> open = new ArrayList<>();
-        HashSet<node_data> closed = new HashSet<>();
+        //HashSet<node_data> closed = new HashSet<>();
 
 
 
@@ -149,11 +118,8 @@ public class Graph_Algo implements graph_algorithms {
 
         while (open.size() > 0){
             current = open.remove(0);
-            closed.add(current);
+            //closed.add(current);
 
-            if(nodes.size() <= 0){
-                return true;
-            }
 
             for (node_data node : current.getNi()) {
                 //if(!open.contains(node) && !closed.contains(node)){
@@ -161,6 +127,10 @@ public class Graph_Algo implements graph_algorithms {
                     open.add(node);
                     nodes.remove(node);
                 }
+            }
+
+            if(nodes.size() <= 0){
+                return true;
             }
         }
 
@@ -170,18 +140,20 @@ public class Graph_Algo implements graph_algorithms {
     @Override
     public int shortestPathDist(int src, int dest) {
         PathNode current = FindShortestPath(src, dest);
-        if(current != null){
-            int distance = 0;
-            while (current != null){
-                if(current.getKey() == src){
-                    break;
-                }
-                current = current.getParent();
-                distance++;
-            }
-            return distance;
-        }
-        return -1;
+        return current != null ? current.getDistance() : -1;
+//        if(current != null){
+//            return current.getDistance();
+////            int distance = 0;
+////            while (current != null){
+////                if(current.getKey() == src){
+////                    break;
+////                }
+////                current = current.getParent();
+////                distance++;
+////            }
+////            return distance;
+//        }
+//        return -1;
     }
 
     @Override

@@ -55,14 +55,22 @@ public class Graph_Ex0_Test2 {
         System.out.println("Running tests for Ex0 - this may take up to 10 seconds!");
         long start = new Date().getTime();
         test0();
+        MyTimer.printTime(start, "test0");
         test1();
+        MyTimer.printTime(start, "test1");
         test2();
+        MyTimer.printTime(start, "test2");
         test2a();
+        MyTimer.printTime(start, "test2a");
         test9();
+        MyTimer.printTime(start, "test9");
         test_n(100,250,1,21,1);
+        MyTimer.printTime(start, "test_n1");
         test_n(1000,3400,2,7,1);
+        MyTimer.printTime(start, "test_n2");
         int no = 1000*50, ed = 302650;
         test_n(no, ed,3,7,1000);
+        MyTimer.printTime(start, "test_n3");
         test_connectivity(100,1);
         test_path(10,1);
         long end = new Date().getTime();
@@ -175,24 +183,29 @@ public class Graph_Ex0_Test2 {
      * @param jump - the group of nodes to be removed
      */
     public static void test_n(int size, int edge, int seed, int tt, int jump) {
+        MyTimer.Start();
         graph g = graph_creator(size, edge, seed);
       //  System.out.println(g);
         graph_algorithms ga = new Graph_Algo();
         ga.init(g);
         node_data[] nodes = nodes(g);
+        MyTimer.printTimeElapsed("test_n : " + size);
         int i=0;
         boolean b = true;
         while(i<=tt) {
-          b &= ga.isConnected();
-          for(int x=0;x<jump;x++) {
-              int s = g.nodeSize();
-              int r = nextRnd(0, s);
-              g.removeNode(r);
-          }
-     //     System.out.println(""+i+") "+g.nodeSize()+"  con: "+b);
-          i++;
+            MyTimer.Start();
+            b &= ga.isConnected();
+            MyTimer.printTimeElapsed("test_n : " + i);
+            for(int x=0;x<jump;x++) {
+                int s = g.nodeSize();
+                int r = nextRnd(0, s);
+                g.removeNode(r);
+            }
+            MyTimer.printTimeElapsed("test_n2 : " + i);
+         //     System.out.println(""+i+") "+g.nodeSize()+"  con: "+b);
+           i++;
         }
-       test("test_n(a) ",b, true);
+        test("test_n(a) ",b, true);
         b = ga.isConnected();
         test("test_n(b) ",b, false);
     }
