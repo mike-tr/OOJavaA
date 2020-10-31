@@ -40,6 +40,11 @@ public class Graph_Algo implements graph_algorithms {
         return isConnectedBF();
     }
 
+    public static int getEdgesInKGraph(int numNodes){
+        // this would return the |E(K_n)|
+        return (numNodes*(numNodes-1)/2);
+    }
+
     public boolean isConnectedBF() {
         // this is another implementation of the same code,
         // this one works a little bit faster
@@ -56,16 +61,63 @@ public class Graph_Algo implements graph_algorithms {
             return true;
         }
 
+        int numNodes = nodes.size() - 1;
+        int edges = data.edgeSize();
+        if(numNodes > edges){
+            // if the graph has less then n-1 edges its not connected
+            return false;
+        }
+
+        int minConnected = numNodes;
+        int maxConnected = 0;
+        int min2 = numNodes;
         for (node_data node: nodes) {
             node.setTag(-1);
+            int v = node.getNi().size();
+            if(v < minConnected){
+                minConnected = v;
+            }else if(v < min2){
+                min2 = v;
+            }
+
+            if(v > maxConnected){
+                maxConnected = v;
+            }
+        }
+//        System.out.println("num nodes : " + numNodes + 1 + " || max neighbours : "
+//                + maxConnected + " || min neighbours : " + minConnected + " || min neighbours2 : " + min2);
+
+        if(maxConnected >= numNodes - minConnected){
+            // if this happens that means there must be a K(minConnected) graph and another K(numNodes - minConnected)
+            // and there must be a node that has edge between them.
+            return true;
+        }
+        // not lets calculate the minumum edges we need in order for the graph to be 100% connected
+        // a fully connected graph has n(n-1)/2 edges we mark it as k.
+        // if a given graph has |edges| > k - (n-1) => the graph also connected
+        // why? because in order for a graph to have the most edges and not be connected, it must have 1 node
+        // with has 0 edges hence the number of edges is k_n - (n-1)
+
+        // but we can improve it!
+        // if we know that all nodes has at least 1 connection that means that in order
+        // for graph to be not connected (and numNodes num of edges) it must has 2 nodes with edge between them
+        // and not connected to the other n-2 nodes.
+        // hence |E| <= K_(n-2) - 2
+
+        // denote if w is the minimum edges for any node, then
+        // the graph is fully connected if |E| > K_(n-1-w)+K_(w+1)
+
+
+        if(edges > getEdgesInKGraph(numNodes - minConnected)
+                + getEdgesInKGraph(minConnected + 1)){
+            // if |Edges| > numberOfEdgesIn(K_(n-w)) + numOfEIn(w+1)
+            return true;
         }
 
         ArrayList<node_data> open = new ArrayList<>();
         node_data current = nodes.iterator().next();
         current.setTag(0);
         open.add(current);
-
-        int max = nodes.size() - 1;
 
         while (open.size() > 0){
             current = open.remove(0);
@@ -75,11 +127,11 @@ public class Graph_Algo implements graph_algorithms {
                 if(node.getTag() < 0){
                     node.setTag(0);
                     open.add(node);
-                    max--;
+                    numNodes--;
                 }
             }
 
-            if(max <= 0){
+            if(numNodes <= 0){
                 return true;
             }
         }
