@@ -34,23 +34,7 @@ we are using bfs algorithm, we loop over neighbours just as in FindPath,
 Except when we put object in Open list, we decrease a counter by 1, counter start value = nodes.size() if counter <= 0, we have seen n different nodes,
 hence the graph is connected.
 
-WE also perform mathematical checks, from graph theory, for instance we can calculate the minimum amount of edges
-the graph needs to have in order to be connected for sure, given the minimum neighbours per node.
-
-this would reduce the time needed for computations A LOT as graphs with a lot of edges are hard core,
-and we can skip a lot of them just by checking if the number of edges is big enough.
-
-this little code reduces the compute time by 25%! ( on tests )
-anyway that is a very good optimization.
-
-and we also know that if the number of edges is less then n-1 the graph is not connected
-
-
-NOTE:
-Using a math check's Makes almost all random graph's calculations in O(n), as the minimum number of nodes,
-is either greater then 1, or equal to 0, with both cases handle amazingly,
-hence a graph with x10 edges then nodes on average would be connected, and it can be proven mathematically,
-and can be checked if it is by only applying one loop, with we do anyway, because we want to set the Tags to 0.
+WE also perform mathematical checks, with can let us avoid some instances, thus making computations faster.
 
 ----------------------------------------------------------------------------------------
 GetNode -

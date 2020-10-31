@@ -4,7 +4,6 @@ import ex0.graph;
 import ex0.graph_algorithms;
 import ex0.node_data;
 
-import java.nio.file.Path;
 import java.util.*;
 
 public class Graph_Algo implements graph_algorithms {
@@ -40,9 +39,55 @@ public class Graph_Algo implements graph_algorithms {
         return isConnectedBF();
     }
 
-    public static int getEdgesInKGraph(int numNodes){
+    public static long getEdgesInKGraph(long numNodes){
         // this would return the |E(K_n)|
         return (numNodes*(numNodes-1)/2);
+    }
+
+    public boolean hasMaxEdges(int numNodes, int minCount, int minNeighbours, int maxNeighbours, int edges){
+        // not lets calculate the minumum edges we need in order for the graph to be 100% connected
+        // a fully connected graph has n(n-1)/2 edges we mark it as k.
+        // if a given graph has |edges| > k - (n-1) => the graph also connected
+        // why? because in order for a graph to have the most edges and not be connected, it must have 1 node
+        // with has 0 edges hence the number of edges is k_n - (n-1)
+
+        // but we can improve it!
+        // if we know that all nodes has at least 1 connection that means that in order
+        // for graph to be not connected (and numNodes num of edges) it must has 2 nodes with edge between them
+        // and not connected to the other n-2 nodes.
+        // hence |E| <= K_(n-2) - 2
+
+        // denote if w is the minimum edges for any node, then
+        // the graph is fully connected if |E| > K_(n-1-w)+K_(w+1)
+        if(maxNeighbours >= numNodes - minNeighbours){
+            // if this happens that means there must be a K(minNeighbours) graph and another K(numNodes - minNeighbours)
+            // and there must be a node that has edge between them.
+            return true;
+        }
+
+        int x = minCount - (minNeighbours + 1);
+        if(x > 0) {
+            // calculate num of edges needed! even lower!
+            long calc = getEdgesInKGraph(numNodes + 1 - minCount) + x * minNeighbours
+                    + getEdgesInKGraph(minNeighbours + 1);
+            System.out.println("max : " + calc);
+            if(edges > calc){
+                System.out.println("Exit 1");
+
+                // if |E| > K(nodes - min_count) + x * min_n + K(
+                return true;
+            }
+        }else{
+            long calc = getEdgesInKGraph(numNodes - minNeighbours)
+                    + getEdgesInKGraph(minNeighbours + 1);
+            System.out.println("max : " + calc);
+            if (edges > calc) {
+                System.out.println("Exit 1");
+                // if |Edges| > numberOfEdgesIn(K_(n-w)) + numOfEIn(w+1)
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isConnectedBF() {
@@ -68,58 +113,50 @@ public class Graph_Algo implements graph_algorithms {
             return false;
         }
 
-        int minConnected = numNodes;
-        int maxConnected = 0;
-        int min2 = numNodes;
+        int minNeighbours = numNodes;
+        int maxNeighbours = 0;
+        int minCount = numNodes;
+
+        HashMap<Integer, Integer> values = new HashMap<>();
+
+        node_data current = null;
         for (node_data node: nodes) {
             node.setTag(-1);
             int v = node.getNi().size();
-            if(v < minConnected){
-                minConnected = v;
-            }else if(v < min2){
-                min2 = v;
+            if(v < minNeighbours){
+                minNeighbours = v;
                 if(v == 0){
                     // there is a node with 0 connections
                     return false;
                 }
+                minCount = 1;
+            }else if(v == minNeighbours){
+                minCount++;
             }
 
-            if(v > maxConnected){
-                maxConnected = v;
+            if(v > maxNeighbours){
+                current = node;
+                maxNeighbours = v;
+            }
+
+            if(values.containsKey(v)){
+                values.put(v, values.get(v) + 1);
+            }else{
+                values.put(v, 1);
             }
         }
-//        System.out.println("num nodes : " + numNodes + 1 + " || max neighbours : "
-//                + maxConnected + " || min neighbours : " + minConnected + " || min neighbours2 : " + min2);
 
-        if(maxConnected >= numNodes - minConnected){
-            // if this happens that means there must be a K(minConnected) graph and another K(numNodes - minConnected)
-            // and there must be a node that has edge between them.
-            return true;
+        String t = "";
+        for (Integer key: values.keySet()) {
+            t += " | " + key + " : " + values.get(key);
         }
-        // not lets calculate the minumum edges we need in order for the graph to be 100% connected
-        // a fully connected graph has n(n-1)/2 edges we mark it as k.
-        // if a given graph has |edges| > k - (n-1) => the graph also connected
-        // why? because in order for a graph to have the most edges and not be connected, it must have 1 node
-        // with has 0 edges hence the number of edges is k_n - (n-1)
-
-        // but we can improve it!
-        // if we know that all nodes has at least 1 connection that means that in order
-        // for graph to be not connected (and numNodes num of edges) it must has 2 nodes with edge between them
-        // and not connected to the other n-2 nodes.
-        // hence |E| <= K_(n-2) - 2
-
-        // denote if w is the minimum edges for any node, then
-        // the graph is fully connected if |E| > K_(n-1-w)+K_(w+1)
-
-
-        if(edges > getEdgesInKGraph(numNodes - minConnected)
-                + getEdgesInKGraph(minConnected + 1)){
-            // if |Edges| > numberOfEdgesIn(K_(n-w)) + numOfEIn(w+1)
-            return true;
-        }
+        System.out.println(t);
+        System.out.println("num nodes : " + (numNodes + 1) + " || num edges : " + edges
+                + " || max neighbours : " + maxNeighbours + " || min neighbours : "
+                + minNeighbours + " || min count : " + minCount);
 
         ArrayList<node_data> open = new ArrayList<>();
-        node_data current = nodes.iterator().next();
+        //node_data current = nodes.iterator().next();
         current.setTag(0);
         open.add(current);
 
