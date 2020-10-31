@@ -4,13 +4,15 @@ import ex0.graph;
 import ex0.graph_algorithms;
 import ex0.node_data;
 
+import java.nio.file.Path;
 import java.util.*;
 
 public class Graph_Algo implements graph_algorithms {
     private graph data;
 
     public Graph_Algo(){
-
+        // create new empty graph
+        data = new Graph_DS();
     }
 
     public Graph_Algo(graph g){
@@ -24,23 +26,11 @@ public class Graph_Algo implements graph_algorithms {
 
     @Override
     public graph copy() {
-        if(data instanceof CopyableGraph){
-            return ((CopyableGraph)data).getDeepCopy();
-        }
-        // honestly have no idea how to pass something like dat!
+        if(data != null)
+            return new Graph_DS(data);
         return null;
     }
 
-
-    public boolean isConnectedt(int i) {
-//        if(i <= 1){
-//            return isConnected1();
-//        }else if(i == 2) {
-//            return isConnected2();
-//        }
-//        return isConnected();
-        return false;
-    }
 
     @Override
     public boolean isConnected() {
@@ -51,6 +41,16 @@ public class Graph_Algo implements graph_algorithms {
     }
 
     public boolean isConnectedBF() {
+        // this is another implementation of the same code,
+        // this one works a little bit faster
+        // set all tags to -1
+        // start with a node set tag to 0
+        // go over neighbours
+        // if tag == 0, skip if tag is -1, add to queue and set as 0. counter --
+        // repeat for every node in queue.
+        // stop when queue.size = 0 hence not connected
+        // if counter <= 0 stop -> is connected!
+
         Collection<node_data> nodes = data.getV();
         if(nodes.size() < 2){
             return true;
@@ -88,29 +88,17 @@ public class Graph_Algo implements graph_algorithms {
     }
 
     public boolean isConnectedRemovalApproach() {
-        // tried 3 different methods and this is the best!
-        // by far outperform every other method,
-        // it comibens both ideas,
-        // we get the list off all nodes
-        // then we pick 1 as starting node,
-        // and subtract all its neighbours, from the total nodes.
-        // we also add the subtracted node to a list of check nodes.
-        // we repeat agaim, for every node in the list
-
-        // at worst case we iterated the whole list so we got n runs
-        // then we check if any of the neighbors is in the list, so its n*(average neighbours count)
-        // but we would also finish if the total list is now empty.
-
+        // method works really simple
+        // start with the first node in the set
+        // go over all neighbours
+        // if neighbour is in nodes list, remove it from there and add to queue
+        // if not skip
         HashSet<node_data> nodes = new HashSet<>(data.getV());
-        //nodes.addAll(data.getV());
         if(nodes.size() < 2){
             return true;
         }
 
         ArrayList<node_data> open = new ArrayList<>();
-        //HashSet<node_data> closed = new HashSet<>();
-
-
 
         node_data current = nodes.iterator().next();
         nodes.remove(current);
@@ -118,11 +106,8 @@ public class Graph_Algo implements graph_algorithms {
 
         while (open.size() > 0){
             current = open.remove(0);
-            //closed.add(current);
-
 
             for (node_data node : current.getNi()) {
-                //if(!open.contains(node) && !closed.contains(node)){
                 if (nodes.contains(node)) {
                     open.add(node);
                     nodes.remove(node);
@@ -130,6 +115,7 @@ public class Graph_Algo implements graph_algorithms {
             }
 
             if(nodes.size() <= 0){
+                // if the size of nodes is 0, that means all the nodes connected
                 return true;
             }
         }
@@ -141,19 +127,6 @@ public class Graph_Algo implements graph_algorithms {
     public int shortestPathDist(int src, int dest) {
         PathNode current = FindShortestPath(src, dest);
         return current != null ? current.getDistance() : -1;
-//        if(current != null){
-//            return current.getDistance();
-////            int distance = 0;
-////            while (current != null){
-////                if(current.getKey() == src){
-////                    break;
-////                }
-////                current = current.getParent();
-////                distance++;
-////            }
-////            return distance;
-//        }
-//        return -1;
     }
 
     @Override
@@ -175,11 +148,8 @@ public class Graph_Algo implements graph_algorithms {
     }
 
     public PathNode FindShortestPath(int src, int dest){
-        // this is an A* algorithm
-        // i know how to implement it from long long ago.
         List<node_data> path = new ArrayList<>();
-
-        List<PathNode> open = new ArrayList<>();
+        List<node_data> open = new ArrayList<>();
         HashSet<Integer> closed = new HashSet<>();
 
         HashMap<node_data, PathNode> hashed = new HashMap<>();
@@ -189,16 +159,22 @@ public class Graph_Algo implements graph_algorithms {
             return null;
         }
 
-        open.add(new PathNode(source));
+        for (node_data node: data.getV()) {
+            node.setTag(-1);
+        }
+        source.setTag(0);
+
+        open.add(source);
         while (open.size() > 0){
-            PathNode current = open.remove(0);
+            node_data current = open.remove(0);
             closed.add(current.getKey());
 
             if(current.getKey() == dest){
-                return current;
+                return new PathNode(current);
             }
 
-            for (node_data node: current.getNode().getNi()) {
+            int tag = current.getTag();
+            for (node_data node: current.getNi()) {
                 if(node == null){
                     continue;
                 }
@@ -206,19 +182,74 @@ public class Graph_Algo implements graph_algorithms {
                     continue;
                 }
                 if(node.getKey() == dest){
-                    return new PathNode(node, current);
+                    PathNode p = new PathNode(node);
+                    p.setDistance(tag + 1);
+                    return p;
                 }
 
-                PathNode cpath = hashed.get(node);
-                if(cpath != null){
-                    cpath.tryNewPath(current);
-                }else{
-                    cpath = new PathNode(node, current);
-                    open.add(cpath);
-                    hashed.put(node, cpath);
+                if(node.getTag() == -1){
+                    open.add(node);
+                    node.setTag(tag + 1);
+                }else if(node.getTag() > tag + 1){
+                    node.setTag(tag + 1);
                 }
             }
         }
         return null;
     }
+
+//    public PathNode FindShortestPath(int src, int dest){
+//        // this is an A* algorithm
+//        // i know how to implement it from long long ago.
+//
+//        // add dest to open
+//        // loop over nodes in open
+//        // on given node, if its not in closed or open, we add to open and set distance + parent
+//        // if at any point we find that neighbour is dest we stop and return the "PathNode"
+//        // with hold distance + traceback to src.
+//        // hence this method gives us distance + path.
+//        List<node_data> path = new ArrayList<>();
+//
+//        List<PathNode> open = new ArrayList<>();
+//        HashSet<Integer> closed = new HashSet<>();
+//
+//        HashMap<node_data, PathNode> hashed = new HashMap<>();
+//
+//        node_data source = data.getNode(src);
+//        if(source == null){
+//            return null;
+//        }
+//
+//        open.add(new PathNode(source));
+//        while (open.size() > 0){
+//            PathNode current = open.remove(0);
+//            closed.add(current.getKey());
+//
+//            if(current.getKey() == dest){
+//                return current;
+//            }
+//
+//            for (node_data node: current.getNode().getNi()) {
+//                if(node == null){
+//                    continue;
+//                }
+//                if(closed.contains(node.getKey())){
+//                    continue;
+//                }
+//                if(node.getKey() == dest){
+//                    return new PathNode(node, current);
+//                }
+//
+//                PathNode cpath = hashed.get(node);
+//                if(cpath != null){
+//                    cpath.tryNewPath(current);
+//                }else{
+//                    cpath = new PathNode(node, current);
+//                    open.add(cpath);
+//                    hashed.put(node, cpath);
+//                }
+//            }
+//        }
+//        return null;
+//    }
 }

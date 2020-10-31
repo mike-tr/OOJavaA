@@ -22,6 +22,9 @@ public class PathNode implements Comparable<PathNode> {
     }
 
     public boolean tryNewPath(PathNode neighbour){
+        // this method returns true if the path from the given node is shorter
+        // actually this never can happen but whatever
+
         if(distance > neighbour.distance + 1){
             System.out.println("from : " + distance + " to " + neighbour.distance + 1);
             distance = neighbour.distance + 1;
@@ -39,12 +42,12 @@ public class PathNode implements Comparable<PathNode> {
         return node;
     }
 
-    public void reset(){
-        distance = Integer.MAX_VALUE;
-    }
-
     public int getKey(){
         return key;
+    }
+
+    public void setDistance(int distance){
+        this.distance = distance;
     }
 
     public int getDistance(){

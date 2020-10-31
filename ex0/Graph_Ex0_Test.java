@@ -15,17 +15,21 @@ import java.util.Random;
 public class Graph_Ex0_Test {
     static int seed = 31;
     static Random _rnd = new Random(seed);
-    static int v_size = 100000;
-    static int e_size = (int)(v_size * 3);
+    static int v_size = 300000;
+    static int e_size = (int)(v_size * 2);
     static graph g0 = new Graph_DS(), g1;
     static graph_algorithms ga;
     public static void main(String[] args) {
+        MyTimer.Start();
+        MyTimer.Start(1);
         test1();
         System.out.println(g0);
+        MyTimer.printTimeElapsed("init");
         test2();
         System.out.println(g0);
         test3();
         System.out.println(g0);
+        MyTimer.printTimeElapsed(1,"total");
     }
     public static void test1() {
 
@@ -64,16 +68,16 @@ public class Graph_Ex0_Test {
         MyTimer.Start();
         boolean isConnected = ga.isConnected();
         long timee = MyTimer.getTimeElapsed();
-        System.out.println("Is connected: "+isConnected + " : " + timee);
+        System.out.println("Is connected: "+isConnected + " : time - " + timee + "ms");
 
         MyTimer.Start();
         int dist19 = ga.shortestPathDist(1,9);
-        System.out.println("shortest path: 1,9 dist="+dist19 + " time : " + MyTimer.getTimeElapsed());
+        System.out.println("shortest path: 1,9 dist="+dist19 + " time : " + MyTimer.getTimeElapsed() + "ms");
 
         int dist91 = ga.shortestPathDist(9,1);
         List<node_data> sp = ga.shortestPath(1,9);
         System.out.println(g1);
-        System.out.println("Is connected: "+isConnected + " : " + timee);
+        System.out.println("Is connected: "+isConnected + " : time - " + timee + "ms");
         System.out.println("shortest path: 1,9 dist="+dist19);
         System.out.println("shortest path: 9,1 dist="+dist91);
 //        for (int i=0;i<sp.size();i++) {

@@ -1,15 +1,13 @@
 package com.company;
 
 import ex0.node_data;
+import java.util.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-
-public class NodeData implements CopyableNode {
+public class NodeData implements node_data {
     private static int nextID;
     private int key;
     private HashMap<Integer, node_data> neighbors = new HashMap<>();
+    //private HashSet<node_data> values = new HashSet<>();
     private String info;
     private int tag;
 
@@ -40,9 +38,17 @@ public class NodeData implements CopyableNode {
 
     @Override
     public int hashCode() {
+        // we can say that the hashCode of a given node is just the key.
         return getKey();
     }
 
+    /**
+     * this method is used for equality check
+     * given 2 nodes we would say they are equal if the key is the same!
+     * useful for "searching" in list's etc...
+     * @param other
+     * @return
+     */
     @Override
     public boolean equals(Object other){
         if (other == this) {
@@ -67,7 +73,6 @@ public class NodeData implements CopyableNode {
     @Override
     public boolean hasNi(int key) {
         return neighbors.containsKey(key);
-        //return neighbors.contains(new NodeData(key));
     }
 
     @Override
@@ -75,7 +80,6 @@ public class NodeData implements CopyableNode {
         if(t.equals(this) || hasNi(t.getKey())){
             return;
         }
-        //neighbors.add(t);
         neighbors.put(t.getKey(), t);
     }
 
@@ -102,10 +106,5 @@ public class NodeData implements CopyableNode {
     @Override
     public void setTag(int tag) {
         this.tag = tag;
-    }
-
-    @Override
-    public CopyableNode getDeepCopy() {
-        return new NodeData(this);
     }
 }
