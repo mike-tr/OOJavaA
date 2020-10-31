@@ -78,6 +78,10 @@ public class Graph_Algo implements graph_algorithms {
                 minConnected = v;
             }else if(v < min2){
                 min2 = v;
+                if(v == 0){
+                    // there is a node with 0 connections
+                    return false;
+                }
             }
 
             if(v > maxConnected){
