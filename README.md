@@ -28,7 +28,8 @@ using the FindPath we then traverse back to the dest from source, if no path was
 GetPathDistance -
 We call findPath and return .distance.
 
-IsConnected - 
+------------------------------------------------------------------------------
+IsConnected -
 we are using bfs algorithm, we loop over neighbours just as in FindPath,
 Except when we put object in Open list, we decrease a counter by 1, counter start value = nodes.size() if counter <= 0, we have seen n different nodes,
 hence the graph is connected.
@@ -44,6 +45,14 @@ anyway that is a very good optimization.
 
 and we also know that if the number of edges is less then n-1 the graph is not connected
 
+
+NOTE:
+Using a math check's Makes almost all random graph's calculations in O(n), as the minimum number of nodes,
+is either greater then 1, or equal to 0, with both cases handle amazingly,
+hence a graph with x10 edges then nodes on average would be connected, and it can be proven mathematically,
+and can be checked if it is by only applying one loop, with we do anyway, because we want to set the Tags to 0.
+
+----------------------------------------------------------------------------------------
 GetNode -
 we are using hashmap so we return the node from the key.
 
