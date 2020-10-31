@@ -148,8 +148,18 @@ public class Graph_Algo implements graph_algorithms {
     }
 
     public PathNode FindShortestPath(int src, int dest){
+        // this is an A* algorithm, not really more like bfs.
+        // i know how to implement it from long long ago.
+
+        // add dest to open
+        // loop over nodes in open
+        // on given node, if its not in closed or open, we add to open and set distance + parent
+        // if at any point we find that neighbour is dest we stop and return the "PathNode"
+        // with hold distance + traceback to src.
+        // hence this method gives us distance + path.
         List<node_data> path = new ArrayList<>();
-        List<node_data> open = new ArrayList<>();
+
+        List<PathNode> open = new ArrayList<>();
         HashSet<Integer> closed = new HashSet<>();
 
         HashMap<node_data, PathNode> hashed = new HashMap<>();
@@ -159,22 +169,16 @@ public class Graph_Algo implements graph_algorithms {
             return null;
         }
 
-        for (node_data node: data.getV()) {
-            node.setTag(-1);
-        }
-        source.setTag(0);
-
-        open.add(source);
+        open.add(new PathNode(source));
         while (open.size() > 0){
-            node_data current = open.remove(0);
+            PathNode current = open.remove(0);
             closed.add(current.getKey());
 
             if(current.getKey() == dest){
-                return new PathNode(current);
+                return current;
             }
 
-            int tag = current.getTag();
-            for (node_data node: current.getNi()) {
+            for (node_data node: current.getNode().getNi()) {
                 if(node == null){
                     continue;
                 }
@@ -182,74 +186,19 @@ public class Graph_Algo implements graph_algorithms {
                     continue;
                 }
                 if(node.getKey() == dest){
-                    PathNode p = new PathNode(node);
-                    p.setDistance(tag + 1);
-                    return p;
+                    return new PathNode(node, current);
                 }
 
-                if(node.getTag() == -1){
-                    open.add(node);
-                    node.setTag(tag + 1);
-                }else if(node.getTag() > tag + 1){
-                    node.setTag(tag + 1);
+                PathNode cpath = hashed.get(node);
+                if(cpath != null){
+                    cpath.tryNewPath(current);
+                }else{
+                    cpath = new PathNode(node, current);
+                    open.add(cpath);
+                    hashed.put(node, cpath);
                 }
             }
         }
         return null;
     }
-
-//    public PathNode FindShortestPath(int src, int dest){
-//        // this is an A* algorithm
-//        // i know how to implement it from long long ago.
-//
-//        // add dest to open
-//        // loop over nodes in open
-//        // on given node, if its not in closed or open, we add to open and set distance + parent
-//        // if at any point we find that neighbour is dest we stop and return the "PathNode"
-//        // with hold distance + traceback to src.
-//        // hence this method gives us distance + path.
-//        List<node_data> path = new ArrayList<>();
-//
-//        List<PathNode> open = new ArrayList<>();
-//        HashSet<Integer> closed = new HashSet<>();
-//
-//        HashMap<node_data, PathNode> hashed = new HashMap<>();
-//
-//        node_data source = data.getNode(src);
-//        if(source == null){
-//            return null;
-//        }
-//
-//        open.add(new PathNode(source));
-//        while (open.size() > 0){
-//            PathNode current = open.remove(0);
-//            closed.add(current.getKey());
-//
-//            if(current.getKey() == dest){
-//                return current;
-//            }
-//
-//            for (node_data node: current.getNode().getNi()) {
-//                if(node == null){
-//                    continue;
-//                }
-//                if(closed.contains(node.getKey())){
-//                    continue;
-//                }
-//                if(node.getKey() == dest){
-//                    return new PathNode(node, current);
-//                }
-//
-//                PathNode cpath = hashed.get(node);
-//                if(cpath != null){
-//                    cpath.tryNewPath(current);
-//                }else{
-//                    cpath = new PathNode(node, current);
-//                    open.add(cpath);
-//                    hashed.put(node, cpath);
-//                }
-//            }
-//        }
-//        return null;
-//    }
 }
