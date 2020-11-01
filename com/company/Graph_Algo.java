@@ -59,6 +59,50 @@ public class Graph_Algo implements graph_algorithms {
 
         // denote if w is the minimum edges for any node, then
         // the graph is fully connected if |E| > K_(n-1-w)+K_(w+1)
+
+//        int minNeighbours = numNodes;
+//        int maxNeighbours = 0;
+//        int minCount = numNodes;
+//
+//        HashMap<Integer, Integer> values = new HashMap<>();
+//
+//        node_data current = null;
+//        for (node_data node: nodes) {
+//            node.setTag(-1);
+//            int v = node.getNi().size();
+//            if(v < minNeighbours){
+//                minNeighbours = v;
+//                if(v == 0){
+//                    // there is a node with 0 connections
+//                    return false;
+//                }
+//                minCount = 1;
+//            }else if(v == minNeighbours){
+//                minCount++;
+//            }
+//
+//            if(v > maxNeighbours){
+//                current = node;
+//                maxNeighbours = v;
+//            }
+//
+//            if(values.containsKey(v)){
+//                values.put(v, values.get(v) + 1);
+//            }else{
+//                values.put(v, 1);
+//            }
+//        }
+
+        //        String t = "";
+//        for (Integer key: values.keySet()) {
+//            t += " | " + key + " : " + values.get(key);
+//        }
+//        System.out.println(t);
+//        System.out.println("num nodes : " + (numNodes + 1) + " || num edges : " + edges
+//                + " || max neighbours : " + maxNeighbours + " || min neighbours : "
+//                + minNeighbours + " || min count : " + minCount);
+
+
         if(maxNeighbours >= numNodes - minNeighbours){
             // if this happens that means there must be a K(minNeighbours) graph and another K(numNodes - minNeighbours)
             // and there must be a node that has edge between them.
@@ -113,50 +157,16 @@ public class Graph_Algo implements graph_algorithms {
             return false;
         }
 
-        int minNeighbours = numNodes;
-        int maxNeighbours = 0;
-        int minCount = numNodes;
-
-        HashMap<Integer, Integer> values = new HashMap<>();
-
-        node_data current = null;
         for (node_data node: nodes) {
             node.setTag(-1);
-            int v = node.getNi().size();
-            if(v < minNeighbours){
-                minNeighbours = v;
-                if(v == 0){
-                    // there is a node with 0 connections
-                    return false;
-                }
-                minCount = 1;
-            }else if(v == minNeighbours){
-                minCount++;
-            }
-
-            if(v > maxNeighbours){
-                current = node;
-                maxNeighbours = v;
-            }
-
-            if(values.containsKey(v)){
-                values.put(v, values.get(v) + 1);
-            }else{
-                values.put(v, 1);
+            if(node.getNi().size() == 0){
+                // there is a node with 0 connections
+                return false;
             }
         }
-
-        String t = "";
-        for (Integer key: values.keySet()) {
-            t += " | " + key + " : " + values.get(key);
-        }
-        System.out.println(t);
-        System.out.println("num nodes : " + (numNodes + 1) + " || num edges : " + edges
-                + " || max neighbours : " + maxNeighbours + " || min neighbours : "
-                + minNeighbours + " || min count : " + minCount);
 
         ArrayList<node_data> open = new ArrayList<>();
-        //node_data current = nodes.iterator().next();
+        node_data current = nodes.iterator().next();
         current.setTag(0);
         open.add(current);
 
@@ -165,7 +175,7 @@ public class Graph_Algo implements graph_algorithms {
 
             for (node_data node : current.getNi()) {
                 //if(!open.contains(node) && !closed.contains(node)){
-                if(node.getTag() < 0){
+                if(node.getTag() == -1){
                     node.setTag(0);
                     open.add(node);
                     numNodes--;
