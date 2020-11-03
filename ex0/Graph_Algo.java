@@ -161,7 +161,7 @@ public class Graph_Algo implements graph_algorithms {
             }
         }
 
-        Queue<node_data> open = new LinkedList<>();
+        ArrayDeque<node_data> open = new ArrayDeque<>();
         node_data current = nodes.iterator().next();
         current.setTag(0);
         open.add(current);
@@ -221,7 +221,7 @@ public class Graph_Algo implements graph_algorithms {
         // hence this method gives us distance + path.
 
 
-        Queue<PathNode> open = new LinkedList<>();
+        ArrayDeque<PathNode> open = new ArrayDeque<>();
         HashMap<node_data, PathNode> hashed = new HashMap<>();
 
 
