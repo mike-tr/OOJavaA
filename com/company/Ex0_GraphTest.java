@@ -1,7 +1,9 @@
-package ex0;
+package com.company;
 
-import com.company.Graph_DS;
-import com.company.NodeData;
+import ex0.Graph_DS;
+import ex0.NodeData;
+import ex0.graph;
+import ex0.node_data;
 import org.junit.Test;
 
 import java.util.Arrays;

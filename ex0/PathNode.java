@@ -1,6 +1,4 @@
-package com.company;
-
-import ex0.node_data;
+package ex0;
 
 public class PathNode implements Comparable<PathNode> {
     private node_data node;

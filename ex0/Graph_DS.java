@@ -1,5 +1,6 @@
-package com.company;
+package ex0;
 
+import ex0.NodeData;
 import ex0.graph;
 import ex0.node_data;
 

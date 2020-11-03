@@ -1,6 +1,7 @@
-package com.company;
+package ex0;
 
 import ex0.node_data;
+
 import java.util.*;
 
 public class NodeData implements node_data {

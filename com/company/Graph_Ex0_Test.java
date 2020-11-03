@@ -1,13 +1,10 @@
-package ex0;
+package com.company;
 /**
  * This is a very basic test class to test mainly the names of the classes & methods.
  *
  */
 
-import com.company.Graph_Algo;
-import com.company.Graph_DS;
-import com.company.MyTimer;
-import com.company.NodeData;
+import ex0.*;
 
 import java.util.List;
 import java.util.Random;

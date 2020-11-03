@@ -1,8 +1,4 @@
-package com.company;
-
-import ex0.graph;
-import ex0.graph_algorithms;
-import ex0.node_data;
+package ex0;
 
 import java.util.*;
 
@@ -165,13 +161,16 @@ public class Graph_Algo implements graph_algorithms {
             }
         }
 
-        ArrayList<node_data> open = new ArrayList<>();
+        Queue<node_data> open = new LinkedList<>();
         node_data current = nodes.iterator().next();
         current.setTag(0);
         open.add(current);
 
         while (open.size() > 0){
-            current = open.remove(0);
+            current = open.poll();
+            if(numNodes <= 0){
+                return true;
+            }
 
             for (node_data node : current.getNi()) {
                 //if(!open.contains(node) && !closed.contains(node)){
@@ -180,10 +179,6 @@ public class Graph_Algo implements graph_algorithms {
                     open.add(node);
                     numNodes--;
                 }
-            }
-
-            if(numNodes <= 0){
-                return true;
             }
         }
 
