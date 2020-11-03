@@ -185,42 +185,6 @@ public class Graph_Algo implements graph_algorithms {
         return false;
     }
 
-    public boolean isConnectedRemovalApproach() {
-        // method works really simple
-        // start with the first node in the set
-        // go over all neighbours
-        // if neighbour is in nodes list, remove it from there and add to queue
-        // if not skip
-        HashSet<node_data> nodes = new HashSet<>(data.getV());
-        if(nodes.size() < 2){
-            return true;
-        }
-
-        ArrayList<node_data> open = new ArrayList<>();
-
-        node_data current = nodes.iterator().next();
-        nodes.remove(current);
-        open.add(current);
-
-        while (open.size() > 0){
-            current = open.remove(0);
-
-            for (node_data node : current.getNi()) {
-                if (nodes.contains(node)) {
-                    open.add(node);
-                    nodes.remove(node);
-                }
-            }
-
-            if(nodes.size() <= 0){
-                // if the size of nodes is 0, that means all the nodes connected
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     @Override
     public int shortestPathDist(int src, int dest) {
         PathNode current = FindShortestPath(src, dest);
@@ -255,23 +219,29 @@ public class Graph_Algo implements graph_algorithms {
         // if at any point we find that neighbour is dest we stop and return the "PathNode"
         // with hold distance + traceback to src.
         // hence this method gives us distance + path.
-        List<node_data> path = new ArrayList<>();
 
-        List<PathNode> open = new ArrayList<>();
-        HashSet<Integer> closed = new HashSet<>();
 
+        Queue<PathNode> open = new LinkedList<>();
         HashMap<node_data, PathNode> hashed = new HashMap<>();
+
+
 
         node_data source = data.getNode(src);
         if(source == null){
             return null;
         }
 
+        if(data.getNode(dest) == null){
+            return null;
+        }
+
+        for (node_data node: data.getV()) {
+            node.setTag(-1);
+        }
+
         open.add(new PathNode(source));
         while (open.size() > 0){
-            PathNode current = open.remove(0);
-            closed.add(current.getKey());
-
+            PathNode current = open.poll();
             if(current.getKey() == dest){
                 return current;
             }
@@ -280,20 +250,16 @@ public class Graph_Algo implements graph_algorithms {
                 if(node == null){
                     continue;
                 }
-                if(closed.contains(node.getKey())){
-                    continue;
-                }
                 if(node.getKey() == dest){
                     return new PathNode(node, current);
                 }
 
-                PathNode cpath = hashed.get(node);
-                if(cpath != null){
-                    cpath.tryNewPath(current);
-                }else{
-                    cpath = new PathNode(node, current);
+                if(node.getTag() == -1){
+                    // its impossible we see the same node twice
+                    PathNode cpath = new PathNode(node, current);
                     open.add(cpath);
                     hashed.put(node, cpath);
+                    node.setTag(0);
                 }
             }
         }
