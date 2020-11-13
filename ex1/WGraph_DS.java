@@ -2,9 +2,7 @@ package ex1;
 
 import ex0.node_data;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class WGraph_DS implements weighted_graph {
     private class Node implements node_info{
@@ -15,21 +13,15 @@ public class WGraph_DS implements weighted_graph {
 
             private boolean dead = false;
             public EdgeData(Node dest, double weight){
-                if(hasEdge(dest.getKey())){
-                    System.out.println("cannot create an edge that already exist");
-                    dead = true;
-                    return;
-                }
-
                 this.dest = dest;
                 this.weight = weight;
                 this.parent = Node.this;
 
-                // add edge to edge data
+//                // add edge to edge data
                 parent.edges.put(dest.key, this);
                 dest.edges.put(parent.key, this);
-
-                //add to neighbour list, this will be O(1) return time.
+//
+//                //add to neighbour list, this will be O(1) return time.
                 parent.neighbours.add(dest);
                 dest.neighbours.add(parent);
 
@@ -43,6 +35,7 @@ public class WGraph_DS implements weighted_graph {
 
             public void setWeight(double weight){
                 this.weight = weight;
+                actionMade++;
             }
 
             public void removeEdge(){
@@ -57,7 +50,7 @@ public class WGraph_DS implements weighted_graph {
                 dest.edges.remove(parent.key);
 
                 edgeNum--;
-                actionMade--;
+                actionMade++;
 
                 dead = true;
             }
@@ -67,9 +60,14 @@ public class WGraph_DS implements weighted_graph {
         private double tag = 0;
 
         private HashMap<Integer, EdgeData> edges = new HashMap<>();
-        private HashSet<node_info> neighbours = new HashSet<>();
+        private Collection<node_info> neighbours = new HashSet<>();
         public Node(int key){
             this.key = key;
+        }
+
+        @Override
+        public String toString() {
+            return "" + getKey();
         }
 
         @Override
@@ -90,23 +88,24 @@ public class WGraph_DS implements weighted_graph {
             if (!(other instanceof node_info)) {
                 return true;
             }
-            return this.getKey() == ((node_data)other).getKey();
+            return this.getKey() == ((node_info)other).getKey();
         }
 
         public boolean addEdge(Node target, double weight){
-            if(this.equals(target)){
+            int tKey = target.getKey();
+            if(tKey == getKey()){
                 return false;
             }
 
-            int tKey = target.getKey();
             if(this.hasEdge(tKey)){
                 edges.get(target.getKey()).setWeight(weight);
                 return false;
             }
 
+
             // create an edge with the given weight, and add it to both sides.
             // as this is an unidirectional graph.
-            EdgeData ed = new EdgeData(target, weight);
+            new EdgeData(target, weight);
             return true;
         }
 
@@ -133,7 +132,8 @@ public class WGraph_DS implements weighted_graph {
                 edge.removeEdge();
             }
 
-            neighbours = new HashSet<>();
+            //neighbours = new LinkedList<>();
+            neighbours = null;
             edges = new HashMap<>();
         }
 
@@ -166,6 +166,11 @@ public class WGraph_DS implements weighted_graph {
     private HashMap<Integer,Node> nodes  = new HashMap<>();
     private int actionMade = 0;
     private int edgeNum = 0;
+
+    @Override
+    public String toString() {
+        return "nodes : " + nodeSize() + " || edges : " + edgeSize() + " || MC : " + getMC();
+    }
 
     @Override
     public node_info getNode(int key) {
@@ -205,11 +210,9 @@ public class WGraph_DS implements weighted_graph {
     public void connect(int node1, int node2, double w) {
         Node first = nodes.get(node1);
         if(first != null){
-            Node second = nodes.get(node1);
+            Node second = nodes.get(node2);
             if(second != null){
-                if(first.addEdge(second, w)){
-                    actionMade++;
-                }
+                first.addEdge(second, w);
             }
         }
     }
@@ -235,7 +238,8 @@ public class WGraph_DS implements weighted_graph {
         Node node = nodes.get(key);
         if(node != null){
             node.removeNode();
-            nodes.remove(node.getKey());
+            nodes.remove(key);
+            actionMade++;
         }
         return node;
     }
