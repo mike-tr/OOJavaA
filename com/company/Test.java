@@ -2,46 +2,36 @@ package com.company;
 
 import ex0.NodeData;
 import ex0.node_data;
+import ex1.Heap;
+import ex1.INode;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 
-public class Test {
-    @Override
-    public int hashCode() {
-        return 0;
-    }
+public class Test extends INode {
 
-    @Override
-    public boolean equals(Object obj) {
-        if(obj == null){
-            return false;
-        }
-        if(obj instanceof Test){
-            //return ((Test) obj).key == key;
-            return true;
-        }
-        return false;
-    }
-
-    int key = 0;
-    Test(int key){
-        this.key = key;
-    }
+    double priority = 0;
+    Test(){ }
 
     public static void main(String[] args) {
+        Heap heap = new Heap();
 
-        HashMap<Test, Integer> test = new HashMap<>();
-        for (int i = 0; i < 1000; i++) {
-            test.put(new Test(i), i);
-        }
-        System.out.println("test[5] = " + test.get(new Test(5)) + " || size-test = " + test.size());
-        System.out.println(new Test(5).equals(new Test(10)));
-//        testCastTime(10000);
-//        testCastTime(100000);
-//        testCastTime(1000000);
-//        testCastTime(10000000);
+        heap.add(new Test(), 10);
+        heap.add(new Test(), 15);
+        heap.add(new Test(), 5);
+        heap.add(new Test(), 3);
+        heap.add(new Test(), 6);
+
+        System.out.println(heap);
+
+        heap.tryUpgrade(heap.getAt(3), 1);
+        System.out.println(heap);
+
+        heap.poll();
+        System.out.println(heap);
+
+
+
     }
 
     public static void testCastTime(int size){
@@ -54,5 +44,15 @@ public class Test {
         Collection<node_data> nd = (Collection<node_data>)(Collection<? extends  node_data>) nodes;
         MyTimer.printTimeElapsed("test size : " + size);
 
+    }
+
+    @Override
+    public double getPriority() {
+        return priority;
+    }
+
+    @Override
+    public void setPriority(double priority) {
+        this.priority = priority;
     }
 }

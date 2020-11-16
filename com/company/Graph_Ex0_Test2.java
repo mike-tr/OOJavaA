@@ -163,7 +163,7 @@ public class Graph_Ex0_Test2 {
     }
 
     /**
-     * small graph test (|V|=10, |E|=30), remove edges and a node:
+     * small graph test (|V|=10, |E|=30), poll edges and a node:
      * so the updates graph will have (|V|=9, |E|=21)
      */
     public static void test9() {

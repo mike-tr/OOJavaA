@@ -132,10 +132,10 @@ public class Graph_DS implements graph {
 
     @Override
     public node_data removeNode(int key) {
-        // if the node exist we remove it.
+        // if the node exist we poll it.
         node_data node = getNode(key);
         if(node != null){
-            // go over all the neighbours and remove the edge between
+            // go over all the neighbours and poll the edge between
             // neighbour and target.
             Collection<node_data> neighbours = new HashSet<>(node.getNi());
             for (node_data ni: neighbours) {
@@ -150,7 +150,7 @@ public class Graph_DS implements graph {
     @Override
     public void removeEdge(int node1, int node2) {
         if(hasEdge(node1, node2)){
-            // straight forward if the edge exist, remove it.
+            // straight forward if the edge exist, poll it.
             node_data first = getNode(node1);
             node_data second = getNode(node2);
 

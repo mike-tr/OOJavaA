@@ -1,17 +1,23 @@
 package ex1;
 
-import java.util.ArrayList;
-
-public class Heap<T extends INode> {
-    private ArrayList<T> items = new ArrayList<>();
+public class ArrHeap<T extends INode> {
+    //private ArrayList<T> items = new ArrayList<>();
+    private T[] items;
     int boundUp = 0;
     int used = 0;
-    public Heap(){
-
+    public ArrHeap() {
+        items = (T[])new INode[10000];
     }
 
+    public ArrHeap(int size){
+        items = (T[])new INode[size];
+    }
+
+
+
     public T lookFirst(){
-        return items.get(0);
+        return items[0];
+        //return items.get(0);
     }
 
     @Override
@@ -24,7 +30,8 @@ public class Heap<T extends INode> {
     }
 
     public T getAt(int index){
-        return items.get(index);
+        return items[index];
+        //return items.get(index);
     }
 
     public void add(T item, double priority){
@@ -33,23 +40,25 @@ public class Heap<T extends INode> {
             return;
         }
 
-        item.setHeap(this);
+        //item.setHeap(this);
         item.setPriority(priority);
         item.setIndex(used);
+
+        items[size()] = item;
         used++;
 
-        items.add(item);
+        //items.add(item);
         boundUp = (used - 1) / 2 - 1;
 
         heapifyUp(item);
     }
 
     public T poll(){
-        swap(items.get(0), items.get(used - 1));
-        T first = items.remove(used - 1);
+        swap(getAt(0), getAt(used - 1));
+        T first = items[used - 1];
         used--;
         if(size() > 0) {
-            heapifyDown(items.get(0));
+            heapifyDown(getAt(0));
         }
         first.setHeap(null);
         boundUp = (used - 1) / 2 - 1;
@@ -63,7 +72,7 @@ public class Heap<T extends INode> {
     }
 
     public int tryUpgrade(T target, double priority){
-        if(target.getHeap() != this){
+        if(target.getHeap() != null){
             return -1;
         }else if(target.getPriority() > priority){
             target.setPriority(priority);
@@ -80,8 +89,8 @@ public class Heap<T extends INode> {
         node1.setIndex(index2);
         node2.setIndex(index);
 
-        items.set(index, node2);
-        items.set(index2, node1);
+        items[index] = node2;
+        items[index2] = node1;
     }
 
     private void heapifyUp(T target){
@@ -90,7 +99,7 @@ public class Heap<T extends INode> {
             return;
         }
 
-        T parent = items.get((target.getIndex() - 1) / 2);
+        T parent = getAt((target.getIndex() - 1) / 2);
         if(target.smaller(parent)){
             swap(target, parent);
 //            items.set(parent.getIndex(), target);
@@ -109,14 +118,14 @@ public class Heap<T extends INode> {
         }
 
 
-        T left = items.get(index * 2 + 1);
+        T left = getAt(index * 2 + 1);
         if(index *2 + 3 > used){
             if(left.smaller(target)){
                 swap(target, left);
             }
             return;
         }
-        T right = items.get(index * 2 + 2);
+        T right = getAt(index * 2 + 2);
         if(left.smaller(target)){
             if(left.smaller(right)){
                 swap(target, left);

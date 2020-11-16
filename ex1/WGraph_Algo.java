@@ -114,9 +114,10 @@ public class WGraph_Algo implements weighted_graph_algorithms {
 ////                return o1.getDistance() > o2.getDistance() ? 1 : -1;
 ////            }
 ////        });
-        PriorityQueue<WPathNode> open = new PriorityQueue<>(
-                (node1, node2) -> node1.getDistance() > node2.getDistance() ? 1 : -1);
+//        PriorityQueue<WPathNode> open = new PriorityQueue<>(
+//                (node1, node2) -> node1.getDistance() > node2.getDistance() ? 1 : -1);
 
+        Heap<WPathNode> open = new Heap();
 
         HashMap<node_data, WPathNode> hashed = new HashMap<>();
 
@@ -133,26 +134,39 @@ public class WGraph_Algo implements weighted_graph_algorithms {
             node.setTag(-1);
         }
 
-        open.add(new WPathNode(source));
+        double tag;
+        open.add(new WPathNode(source), 0);
         while (open.size() > 0){
             WPathNode current = open.poll();
 
             if(current.getKey() == dest){
                 return current;
             }
-            if(current.getNode().getTag() == 0){
-                continue;
-            }
             int key = current.getKey();
-            current.getNode().setTag(0);
+
+            // tag -2 means we already visited this node so we skip
+            current.getNode().setTag(-2);
 
             for (node_info node: graph.getV(key)) {
-                if(node.getTag() == 0){
+                tag = node.getTag();
+                if(tag == -2){
                     continue;
                 }
                 double weight = graph.getEdge(key, node.getKey());
-                WPathNode pathNode = new WPathNode(node, current, weight);
-                open.add(pathNode);
+
+                if(tag == -1){
+                    WPathNode pathNode = new WPathNode(node, current, weight);
+                    open.add(pathNode, pathNode.getPriority());
+                    continue;
+                }
+
+                double dist = weight + current.getDistance();
+                WPathNode pn = open.getAt((int)tag);
+                if(open.tryUpgrade(pn, dist) == 1){
+                    pn.setParent(current);
+                }
+
+                //open.add(pathNode);
             }
         }
         return null;
@@ -207,7 +221,7 @@ public class WGraph_Algo implements weighted_graph_algorithms {
 //        String parent;
 //        open.add(source);
 //        source.setTag(0);
-//        while (open.size() > 0){
+//        while (open.used() > 0){
 //            current = open.poll();
 //
 //            if(current.getKey() == dest){

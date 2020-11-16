@@ -2,7 +2,7 @@ package ex1;
 
 import ex0.node_data;
 
-public class WPathNode implements INode {
+public class WPathNode extends INode {
     private node_info node;
     private WPathNode neighbour;
     private double distance;
@@ -65,6 +65,10 @@ public class WPathNode implements INode {
         return this.key == ((WPathNode) other).key;
     }
 
+    public void setParent(WPathNode root){
+        this.neighbour = root;
+    }
+
     @Override
     public double getPriority() {
         return distance;
@@ -75,7 +79,13 @@ public class WPathNode implements INode {
         this.distance = distance;
     }
 
-//    @Override
+    @Override
+    public void setIndex(int index) {
+        super.setIndex(index);
+        node.setTag(index);
+    }
+
+    //    @Override
 //    public int compareTo(WPathNode o) {
 //        return this.distance - o.distance >= 0 ? 1 : 0;
 //    }
