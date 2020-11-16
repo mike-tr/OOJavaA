@@ -13,9 +13,9 @@ import java.util.Random;
 public class Graph_Ex1_Test {
     static int seed = 31;
     static Random _rnd = new Random(seed);
-    static int v_size = 5000;
-    static int e_size = (int)(v_size * 1000);
-    static weighted_graph g0 = new WGraph_DS3(), g1;
+    static int v_size = 3000;
+    static int e_size = (int)(v_size * 5);
+    static weighted_graph g0 = new WGraph_DS(), g1;
     static weighted_graph_algorithms ga;
     public static void main(String[] args) {
         MyTimer.Start();
@@ -31,7 +31,6 @@ public class Graph_Ex1_Test {
         MyTimer.printTimeElapsed(1,"total");
     }
     public static void test1() {
-
         for(int i=0;i<v_size;i++) {
             node_data n = new NodeData();
             g0.addNode(n.getKey());
@@ -45,7 +44,6 @@ public class Graph_Ex1_Test {
             g0.connect(a,b,w);
             j++;
         }
-        System.out.println(j);
     }
     public static void test2() {
         g0.removeEdge(9,3);
@@ -61,15 +59,15 @@ public class Graph_Ex1_Test {
         ga = new WGraph_Algo(g0);
         MyTimer.Start();
         g1 = ga.copy();
-        MyTimer.printTimeElapsed();
+        MyTimer.printTimeElapsed("copy time ");
         ga.init(g1);
         System.out.println(g1);
 
 
         MyTimer.Start();
         boolean isConnected = ga.isConnected();
-        long timee = MyTimer.getTimeElapsed();
-        System.out.println("Is connected: "+isConnected + " : time - " + timee + "ms");
+        long time = MyTimer.getTimeElapsed();
+        System.out.println("Is connected: "+isConnected + " : time - " + time + "ms");
 
         MyTimer.Start();
         double dist19 = ga.shortestPathDist(1,9);
@@ -78,7 +76,7 @@ public class Graph_Ex1_Test {
         double dist91 = ga.shortestPathDist(9,1);
         List<node_info> sp = ga.shortestPath(1,9);
         System.out.println(g1);
-        System.out.println("Is connected: "+isConnected + " : time - " + timee + "ms");
+        System.out.println("Is connected: "+isConnected + " : time - " + time + "ms");
         System.out.println("shortest path: 1,9 dist="+dist19);
         System.out.println("shortest path: 9,1 dist="+dist91);
         if(sp != null) {

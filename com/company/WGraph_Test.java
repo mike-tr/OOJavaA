@@ -2,23 +2,20 @@ package com.company;
 
 import ex0.NodeData;
 import ex0.node_data;
-import ex1.WGraph_DS1;
-import ex1.node_info;
-import ex1.weighted_graph;
+import ex1.*;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class represents a very simple (naive) JUnit test case
  * for Graph (Ex0)
  */
-public class Ex1_GraphTest {
+public class WGraph_Test {
     private static Random _rand;
     private static long _seed;
     public static void initSeed(long seed) {
@@ -50,10 +47,83 @@ public class Ex1_GraphTest {
      */
     @Test(timeout = 5000)
     public void graphTest_runtime() {
-        int v=1000*50, e=v*6;
+        int v=1000*50, e=v*5;
         weighted_graph g = graph_creator(v,e,1);
         // while(true) {;}
     }
+
+    @Test
+    public void graphLoadSaveTest(){
+        int v=1000, e=v*10;
+        String fileLoc = "graphT01";
+        weighted_graph g = graph_creator(v,e,1);
+
+
+
+        weighted_graph_algorithms algo = new WGraph_Algo(g);
+
+        assertTrue(algo.save(fileLoc));
+        assertTrue(algo.load(fileLoc));
+        assertNotEquals(algo.getGraph(), g);
+        assertEquals(algo.getGraph().toString(), g.toString());
+
+        weighted_graph_algorithms algoOrigin = new WGraph_Algo(g);
+        assertEquals(algo.shortestPath(0, 10).toString(),
+                algoOrigin.shortestPath(0, 10).toString());
+    }
+
+    @Test
+    public void graphConnectivity(){
+        int v_size = 1000;
+        int e_size = v_size * 2;
+        int mid = v_size / 2;
+        testIsConnected(mid, e_size, v_size, 1);
+    }
+
+    public void testIsConnected(int mid, int e_size, int v_size, int seed) throws RuntimeException {
+        if(mid < 1 || mid > v_size - 2){
+            throw new RuntimeException("mid should be > 0 and less then n_size - 1");
+        }
+        weighted_graph g = graph_creator(v_size, 0,1);
+        int[] nodes = nodes(g);
+        int middle = nodes[mid];
+
+        int rootA = nodes[mid - 1];
+        int rootB = nodes[mid];
+
+//         create 2 "trees", with mid - 1 connected to all in one,
+//         and mid connected to all in the other half.
+        for (int i = 0; i < mid - 1; i++) {
+            double w = nextRnd(1, 10.0);
+            g.connect(nodes[i], rootA,w);
+        }
+        for (int i = mid+1; i < v_size; i++) {
+            double w = nextRnd(1, 10.0);
+            g.connect(nodes[i], rootB,w);
+        }
+
+
+        e_size = e_size / 2;
+        while(g.edgeSize() < e_size) {
+            int a = nextRnd(mid,v_size);
+            int b = nextRnd(mid,v_size);
+            double w = nextRnd(1, 10.0);
+            g.connect(nodes[a],nodes[b],w);
+
+            a = nextRnd(0,mid);
+            b = nextRnd(0,mid);
+            w = nextRnd(1, 10.0);
+            g.connect(nodes[a],nodes[b],w);
+        }
+
+        weighted_graph_algorithms a = new WGraph_Algo(g);
+        assertFalse(a.isConnected());
+
+        g.connect(rootA , rootB, 1);
+        assertTrue(a.isConnected());
+    }
+
+
     /////////////////////////////////////////////////
     private static int nextRnd(int min, int max) {
         double v = nextRnd(0.0+min, (double)max);
@@ -92,7 +162,7 @@ public class Ex1_GraphTest {
      * @return
      */
     private static weighted_graph graph_creator(int v_size, int e_size, int seed) {
-        weighted_graph g = new WGraph_DS1();
+        weighted_graph g = new WGraph_DS();
        initSeed(seed);
         for(int i=0;i<v_size;i++) {
             node_data n = new NodeData();

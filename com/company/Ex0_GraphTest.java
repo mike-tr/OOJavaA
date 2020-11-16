@@ -1,12 +1,8 @@
 package com.company;
 
-import ex0.NodeData;
-import ex0.node_data;
 import ex1.*;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +50,7 @@ public class Ex0_GraphTest {
     }
 
     private static weighted_graph graph_creator(int v_size, int connected, int seed) {
-        weighted_graph g = new WGraph_DS();
+        weighted_graph g = new WGraph_DS1();
         initSeed(seed);
         for(int i=0;i<v_size;i++) {
             g.addNode(i);

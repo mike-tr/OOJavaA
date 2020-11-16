@@ -14,7 +14,7 @@ public class Graph_Ex0_Testo {
     static int seed = 31;
     static Random _rnd = new Random(seed);
     static int v_size = 3000;
-    static int e_size = (int)(v_size * 1000);
+    static int e_size = (int)(v_size * 5);
     static graph g0 = new Graph_DS(), g1;
     static graph_algorithms ga;
     public static void main(String[] args) {
