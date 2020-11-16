@@ -1,15 +1,16 @@
 package ex1;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class WGraph_DS3 implements weighted_graph {
-    private class Node implements node_info{
+public class WGraph_DS3 extends WGraphBasics {
+    private class Node implements node_info, Serializable {
         private int key;
-        private String info = "";
-        private double tag = 0;
+        private transient String info = "";
+        private transient double tag = 0;
 
         public Node(int key){
             this.key = key;
@@ -67,16 +68,35 @@ public class WGraph_DS3 implements weighted_graph {
         }
     }
 
-    private HashMap<Integer,node_info> nodes  = new HashMap<>();
-    private HashMap<Integer, HashMap<Integer, Double>> edges = new HashMap<>();
-    private int actionMade = 0;
-    private int edgeNum = 0;
+    private HashMap<Integer,node_info> nodes;
+    private HashMap<Integer, HashMap<Integer, Double>> edges;
+    private int actionMade;
+    private int edgeNum;
 
-    private Tuple getTuple(int x, int y){
-        // this method gives us the following,
-        // a tuple where tuple.x is always greater then tuple.y.
-        // we always return null if x == y.
-        return x == y ? null : x > y ? new Tuple(x, y) : new Tuple(y, x);
+    public WGraph_DS3(){
+        init();
+    }
+
+    public WGraph_DS3(weighted_graph graph){
+        super(graph);
+    }
+
+    @Override
+    public WGraphBasics getDeepCopy() {
+        return new WGraph_DS3(this);
+    }
+
+    @Override
+    protected void init() {
+        nodes = new HashMap<>();
+        edges = new HashMap<>();
+        actionMade = 0;
+        edgeNum = 0;
+    }
+
+    @Override
+    protected void setMC(int mc) {
+        actionMade = mc;
     }
 
     @Override
@@ -91,8 +111,7 @@ public class WGraph_DS3 implements weighted_graph {
 
     @Override
     public boolean hasEdge(int node1, int node2) {
-        node_info first = nodes.get(node1);
-        if(first != null){
+        if(edges.containsKey(node1)){
             return edges.get(node1).containsKey(node2);
         }
         return false;
@@ -119,6 +138,9 @@ public class WGraph_DS3 implements weighted_graph {
 
     @Override
     public void connect(int node1, int node2, double w) {
+        if(node1 == node2){
+            return;
+        }
         node_info first = nodes.get(node1);
         if(first != null){
             node_info second = nodes.get(node2);
@@ -162,9 +184,12 @@ public class WGraph_DS3 implements weighted_graph {
         if(node != null){
             Collection<Integer> neighbours = new HashSet<>(edges.get(key).keySet());
             for (Integer ni: neighbours) {
-                removeEdge(ni, key);
+                edges.get(ni).remove(key);
+                //removeEdge(ni, key);
             }
 
+            actionMade += neighbours.size();
+            edgeNum -= neighbours.size();
             nodes.remove(key);
             actionMade++;
         }

@@ -2,7 +2,7 @@ package com.company;
 
 import ex0.NodeData;
 import ex0.node_data;
-import ex1.WGraph_DS;
+import ex1.WGraph_DS1;
 import ex1.node_info;
 import ex1.weighted_graph;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class Ex1_GraphTest {
      * @return
      */
     private static weighted_graph graph_creator(int v_size, int e_size, int seed) {
-        weighted_graph g = new WGraph_DS();
+        weighted_graph g = new WGraph_DS1();
        initSeed(seed);
         for(int i=0;i<v_size;i++) {
             node_data n = new NodeData();

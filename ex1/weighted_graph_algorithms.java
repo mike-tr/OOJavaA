@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface weighted_graph_algorithms {
     /**
-     * Init the graph on which this set of algorithms operates on.
+     * init the graph on which this set of algorithms operates on.
      * @param g
      */
     public void init(weighted_graph g);

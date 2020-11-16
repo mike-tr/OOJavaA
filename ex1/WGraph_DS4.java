@@ -1,16 +1,18 @@
 package ex1;
 
 import java.io.Serializable;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class WGraph_DS2 extends WGraphBasics {
-    private class Node implements node_info, Serializable {
+public class WGraph_DS4 extends WGraphBasics {
+    private class Node implements node_info, Serializable{
         private int key;
         private transient String info = "";
         private transient double tag = 0;
 
+        private HashMap<Integer, Double> edges = new HashMap<>();
         public Node(int key){
             this.key = key;
         }
@@ -41,6 +43,69 @@ public class WGraph_DS2 extends WGraphBasics {
             return this.getKey() == ((node_info)other).getKey();
         }
 
+        private void addEdge(Node target, double weight){
+            if(target == null){
+                return;
+            }
+
+            int tKey = target.getKey();
+            if(tKey == getKey()){
+                return;
+            }
+
+            actionMade++;
+            if(edges.containsKey(tKey)){
+                edges.put(tKey, weight);
+                target.edges.put(key, weight);
+                return;
+            }
+            edges.put(tKey, weight);
+            target.edges.put(key, weight);
+            edgeNum++;
+        }
+
+        private void removeEdge(int target){
+            if(edges.containsKey(target)){
+                edges.remove(target);
+                nodes.get(target).edges.remove(key);
+                actionMade++;
+                edgeNum--;
+            }
+        }
+
+        public Collection<node_info> getV(){
+            Collection<node_info> nis = new ArrayDeque<>();
+            Collection<Integer> list = edges.keySet();
+            for (Integer id: list) {
+                nis.add(getNode(id));
+            }
+            return nis;
+        }
+
+        public boolean hasEdge(int neighbour){
+            return edges.containsKey(neighbour);
+        }
+
+        public double getEdge(int neighbour){
+            if(hasEdge(neighbour)){
+                return edges.get(neighbour);
+            }
+            return -1;
+        }
+
+        private void deleteNode(){
+            // its an inner class so i assume its was called properly
+            Collection<Integer> keys = new HashSet<>(edges.keySet());
+            for (int ni: keys) {
+                nodes.get(ni).edges.remove(key);
+                actionMade++;
+                edgeNum--;
+            }
+            edges = new HashMap<>();
+            nodes.remove(key);
+            actionMade++;
+        }
+
         @Override
         public int getKey() {
             return key;
@@ -67,40 +132,28 @@ public class WGraph_DS2 extends WGraphBasics {
         }
     }
 
-    private HashMap<Integer,node_info> nodes;
-    private HashMap<Integer, HashSet<node_info>> neighbours;
-    private HashMap<Tuple,Double> edges;
-    private int actionMade = 0;
-    private int edgeNum = 0;
+    private HashMap<Integer,Node> nodes;
+    private int actionMade;
+    private int edgeNum;
 
-    public WGraph_DS2(){
+    public WGraph_DS4(){
         init();
     }
 
-    public WGraph_DS2(weighted_graph graph){
+    public WGraph_DS4(weighted_graph graph){
         super(graph);
     }
 
     @Override
-    public WGraphBasics getDeepCopy() {
-        return new WGraph_DS2(this);
-    }
-
-    @Override
     protected void init() {
-        // initializing on start.
         nodes = new HashMap<>();
-        edges = new HashMap<>();
-        neighbours = new HashMap<>();
         actionMade = 0;
         edgeNum = 0;
     }
 
-    private Tuple getTuple(int x, int y){
-        // this method gives us the following,
-        // a tuple where tuple.x is always greater then tuple.y.
-        // we always return null if x == y.
-        return x == y ? null : x > y ? new Tuple(x, y) : new Tuple(y, x);
+    @Override
+    public WGraphBasics getDeepCopy() {
+        return new WGraph_DS4(this);
     }
 
     @Override
@@ -120,18 +173,18 @@ public class WGraph_DS2 extends WGraphBasics {
 
     @Override
     public boolean hasEdge(int node1, int node2) {
-        node_info first = nodes.get(node1);
+        Node first = nodes.get(node1);
         if(first != null){
-            return neighbours.get(node1).contains(node2);
+            return first.hasEdge(node2);
         }
         return false;
     }
 
     @Override
     public double getEdge(int node1, int node2) {
-        Tuple tuple = getTuple(node1, node2);
-        if(tuple != null){
-            return edges.get(tuple);
+        Node first = nodes.get(node1);
+        if(first != null){
+            return first.getEdge(node2);
         }
         return -1;
     }
@@ -140,31 +193,17 @@ public class WGraph_DS2 extends WGraphBasics {
     public void addNode(int key) {
         if(!nodes.containsKey(key)){
             nodes.put(key, new Node(key));
-            neighbours.put(key, new HashSet<>());
             actionMade++;
         }
     }
 
     @Override
     public void connect(int node1, int node2, double w) {
-        if(node1 == node2){
-            return;
-        }
-        node_info first = nodes.get(node1);
+        Node first = nodes.get(node1);
         if(first != null){
-            node_info second = nodes.get(node2);
+            Node second = nodes.get(node2);
             if(second != null){
-                Tuple tuple = getTuple(node1, node2);
-                edges.put(tuple, w);
-
-                actionMade++;
-                if(neighbours.get(node1).contains(second)){
-                    return;
-                }
-                edgeNum++;
-
-                neighbours.get(node1).add(second);
-                neighbours.get(node2).add(first);
+                first.addEdge(second, w);
             }
         }
     }
@@ -173,40 +212,29 @@ public class WGraph_DS2 extends WGraphBasics {
     public Collection<node_info> getV() {
         // b.t.w this casting operation is O(1) already tested.
         // its safe because i know that all the objects in nodes are indeed node_info.
-        return nodes.values();
+        return (Collection<node_info>) (Collection<? extends node_info>) nodes.values();
     }
 
     @Override
     public Collection<node_info> getV(int node_id) {
-        return neighbours.get(node_id);
+        Node node = nodes.get(node_id);
+        return node != null ? node.getV() : null;
     }
 
     @Override
     public node_info removeNode(int key) {
-        node_info node = nodes.get(key);
+        Node node = nodes.get(key);
         if(node != null){
-            Collection<node_info> neighbours = new HashSet<>(this.neighbours.get(key));
-            for (node_info ni: neighbours) {
-                removeEdge(ni.getKey(), key);
-            }
-
-            nodes.remove(key);
-            this.neighbours.remove(key);
-            actionMade++;
+            node.deleteNode();
         }
         return node;
     }
 
     @Override
     public void removeEdge(int node1, int node2) {
-        Tuple tuple = getTuple(node1, node2);
-        if(edges.containsKey(tuple)){
-            edges.remove(tuple);
-            neighbours.get(node1).remove(getNode(node2));
-            neighbours.get(node2).remove(getNode(node1));
-
-            actionMade++;
-            edgeNum--;
+        Node node = nodes.get(node1);
+        if(node != null) {
+            node.removeEdge(node2);
         }
     }
 

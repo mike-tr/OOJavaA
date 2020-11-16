@@ -1,6 +1,8 @@
 package ex1;
 
-public class Tuple {
+import java.io.Serializable;
+
+public class Tuple implements Serializable {
     int x;
     int y;
 
