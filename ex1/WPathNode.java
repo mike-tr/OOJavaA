@@ -2,7 +2,7 @@ package ex1;
 
 import ex0.node_data;
 
-public class WPathNode implements Comparable<WPathNode> {
+public class WPathNode implements INode {
     private node_info node;
     private WPathNode neighbour;
     private double distance;
@@ -66,7 +66,17 @@ public class WPathNode implements Comparable<WPathNode> {
     }
 
     @Override
-    public int compareTo(WPathNode o) {
-        return this.distance - o.distance >= 0 ? 1 : 0;
+    public double getPriority() {
+        return distance;
     }
+
+    @Override
+    public void setPriority(double distance) {
+        this.distance = distance;
+    }
+
+//    @Override
+//    public int compareTo(WPathNode o) {
+//        return this.distance - o.distance >= 0 ? 1 : 0;
+//    }
 }

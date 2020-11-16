@@ -140,6 +140,9 @@ public class WGraph_Algo implements weighted_graph_algorithms {
             if(current.getKey() == dest){
                 return current;
             }
+            if(current.getNode().getTag() == 0){
+                continue;
+            }
             int key = current.getKey();
             current.getNode().setTag(0);
 
@@ -148,20 +151,95 @@ public class WGraph_Algo implements weighted_graph_algorithms {
                     continue;
                 }
                 double weight = graph.getEdge(key, node.getKey());
-                WPathNode pathNode = hashed.get(node.getKey());
-                if(pathNode != null){
-                    if(pathNode.updatePath(current, weight)){
-                        open.remove(pathNode);
-                        open.add(pathNode);
-                    }
-                }else{
-                    pathNode = new WPathNode(node, current, weight);
-                    open.add(pathNode);
-                }
+                WPathNode pathNode = new WPathNode(node, current, weight);
+                open.add(pathNode);
             }
         }
         return null;
     }
+
+//    @Override
+//    public double shortestPathDist(int src, int dest) {
+//        // given the WPathNode we have the distance, so return it.
+//        node_info path = calculateShortestPath(src, dest);
+//        return path != null ? path.getTag() : -1;
+//    }
+//
+//    @Override
+//    public List<node_info> shortestPath(int src, int dest) {
+//        //given WPathNode we traverse back and get the original path.
+//        node_info pathN = calculateShortestPath(src, dest);
+//        if(pathN != null){
+//            List<node_info> path = new ArrayList<>();
+//            while (pathN != null){
+//                path.add(0, pathN);
+//                if(pathN.getKey() == src){
+//                    break;
+//                }
+//                pathN = graph.getNode(Integer.parseInt(pathN.getInfo()));
+//            }
+//            return path;
+//        }
+//        return null;
+//    }
+//
+//    public node_info calculateShortestPath(int src, int dest) {
+//        PriorityQueue<node_info> open = new PriorityQueue<>(
+//                (node1, node2) -> node1.getTag() > node2.getTag() ? 1 : -1);
+//        HashSet<Integer> closed = new HashSet<>();
+//
+//        node_info source = graph.getNode(src);
+//        if(source == null){
+//            return null;
+//        }
+//
+//        if(graph.getNode(dest) == null){
+//            return null;
+//        }
+//
+//        for (node_info node: graph.getV()) {
+//            node.setTag(-1);
+//        }
+//
+//        node_info current;
+//        double distance;
+//        double distance_ni;
+//        String parent;
+//        open.add(source);
+//        source.setTag(0);
+//        while (open.size() > 0){
+//            current = open.poll();
+//
+//            if(current.getKey() == dest){
+//                return current;
+//            }
+//
+//            int key = current.getKey();
+//            closed.add(key);
+//            parent = Integer.toString(key);
+//            distance = current.getTag();
+//            //current.setTag(0);
+//
+//            for (node_info node: graph.getV(key)) {
+//                if(closed.contains(node.getKey())){
+//                    continue;
+//                }
+//
+//                distance_ni = graph.getEdge(key, node.getKey()) + distance;
+//
+//                if(node.getTag() == -1){
+//                    node.setInfo(parent);
+//                    node.setTag(distance_ni);
+//                    open.add(node);
+//                }else if(node.getTag() > distance_ni){
+//                    node.setInfo(parent);
+//                    node.setTag(distance_ni);
+//                    open.add(node);
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
     @Override
     public boolean save(String file) {

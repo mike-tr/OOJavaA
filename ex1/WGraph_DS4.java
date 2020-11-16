@@ -37,11 +37,11 @@ public class WGraph_DS4 extends WGraphBasics {
                 return this.key == (Integer) other;
             }
 
-            if (!(other instanceof node_info)) {
-                return true;
+            if (other instanceof node_info) {
+                return key == other.hashCode();
             }
-            return this.getKey() == ((node_info)other).getKey();
-        }
+            return false;
+    }
 
         private void addEdge(Node target, double weight){
             if(target == null){

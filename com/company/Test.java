@@ -8,11 +8,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Test {
-
-//    @Override
-//    public int hashCode() {
-//        return key;
-//    }
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -20,7 +19,8 @@ public class Test {
             return false;
         }
         if(obj instanceof Test){
-            return ((Test) obj).key == key;
+            //return ((Test) obj).key == key;
+            return true;
         }
         return false;
     }
@@ -37,7 +37,7 @@ public class Test {
             test.put(new Test(i), i);
         }
         System.out.println("test[5] = " + test.get(new Test(5)) + " || size-test = " + test.size());
-        System.out.println(new Test(5).equals(new Test(5)));
+        System.out.println(new Test(5).equals(new Test(10)));
 //        testCastTime(10000);
 //        testCastTime(100000);
 //        testCastTime(1000000);

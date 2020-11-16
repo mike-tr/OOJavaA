@@ -13,8 +13,8 @@ import java.util.Random;
 public class Graph_Ex1_Test {
     static int seed = 31;
     static Random _rnd = new Random(seed);
-    static int v_size = 3000;
-    static int e_size = (int)(v_size * 5);
+    static int v_size = 100000;
+    static int e_size = (int)(v_size * 10);
     static weighted_graph g0 = new WGraph_DS(), g1;
     static weighted_graph_algorithms ga;
     public static void main(String[] args) {
