@@ -50,7 +50,7 @@ public class Ex0_GraphTest {
     }
 
     private static weighted_graph graph_creator(int v_size, int connected, int seed) {
-        weighted_graph g = new WGraph_DS1();
+        weighted_graph g = new WGraph_DS();
         initSeed(seed);
         for(int i=0;i<v_size;i++) {
             g.addNode(i);

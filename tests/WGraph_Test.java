@@ -1,4 +1,4 @@
-package com.company;
+package tests;
 
 import ex0.NodeData;
 import ex0.node_data;
@@ -47,7 +47,7 @@ public class WGraph_Test {
      */
     @Test(timeout = 5000)
     public void graphTest_runtime() {
-        int v=1000*50, e=v*5;
+        int v=10000*30, e=v*5;
         weighted_graph g = graph_creator(v,e,1);
         // while(true) {;}
     }
@@ -64,12 +64,36 @@ public class WGraph_Test {
 
         assertTrue(algo.save(fileLoc));
         assertTrue(algo.load(fileLoc));
-        assertNotEquals(algo.getGraph(), g);
-        assertEquals(algo.getGraph().toString(), g.toString());
+        assertEquals(algo.getGraph(), g);
 
         weighted_graph_algorithms algoOrigin = new WGraph_Algo(g);
         assertEquals(algo.shortestPath(0, 10).toString(),
                 algoOrigin.shortestPath(0, 10).toString());
+    }
+
+    @Test
+    public void graphPathTest(){
+        weighted_graph graph = new WGraph_DS();
+        graph.addNode(1);
+        graph.addNode(2);
+        graph.addNode(3);
+        graph.addNode(4);
+        graph.addNode(5);
+
+        graph.connect(1, 2, 10);
+        graph.connect(1, 3, 5);
+        graph.connect(1,4,100);
+        graph.connect(2,4,5);
+        graph.connect(2,3,50);
+        graph.connect(3,5,30);
+        graph.connect(4,5,10);
+
+        weighted_graph_algorithms algo = new WGraph_Algo(graph);
+
+        double v1 = algo.shortestPathDist(1,5);
+        double v2 = algo.shortestPathDist(5,1);
+        assertEquals(v1, v2);
+        assertEquals(algo.shortestPathDist(1,5), 25);
     }
 
     @Test
@@ -78,13 +102,19 @@ public class WGraph_Test {
         int e_size = v_size * 2;
         int mid = v_size / 2;
         testIsConnected(mid, e_size, v_size, 1);
-    }
+        testIsConnected(mid, e_size * 4, v_size , 15);
+        testIsConnected(mid, e_size, v_size * 5, 32);
+        testIsConnected(mid, e_size * 3, v_size * 15, 32);
+}
 
     public void testIsConnected(int mid, int e_size, int v_size, int seed) throws RuntimeException {
+        if(v_size < 50){
+            v_size = 50;
+        }
         if(mid < 1 || mid > v_size - 2){
             throw new RuntimeException("mid should be > 0 and less then n_size - 1");
         }
-        weighted_graph g = graph_creator(v_size, 0,1);
+        weighted_graph g = graph_creator(v_size, 0,seed);
         int[] nodes = nodes(g);
         int middle = nodes[mid];
 
@@ -112,15 +142,22 @@ public class WGraph_Test {
 
             a = nextRnd(0,mid);
             b = nextRnd(0,mid);
-            w = nextRnd(1, 10.0);
+            w = nextRnd(5, 10.0);
             g.connect(nodes[a],nodes[b],w);
         }
 
         weighted_graph_algorithms a = new WGraph_Algo(g);
         assertFalse(a.isConnected());
+        assertEquals(a.shortestPathDist(nodes[0], nodes[v_size-1]), -1);
 
         g.connect(rootA , rootB, 1);
         assertTrue(a.isConnected());
+        assertEquals(a.shortestPathDist(nodes[0], nodes[v_size-1]), a.shortestPathDist(nodes[v_size-1], nodes[0]));
+        g.connect(nodes[0], nodes[5], 1);
+        g.connect(nodes[5], rootA, 1);
+        g.connect(nodes[v_size - 8], rootB, 1);
+        g.connect(nodes[v_size - 8], nodes[v_size - 1], 1);
+        assertEquals(a.shortestPathDist(nodes[0], nodes[v_size-1]), 5);
     }
 
 
@@ -145,7 +182,7 @@ public class WGraph_Test {
     private static int[] nodes(weighted_graph g) {
         int size = g.nodeSize();
         Collection<node_info> V = g.getV();
-        System.out.println(V.size() + " ," + size);
+        //System.out.println(V.size() + " ," + size);
         node_info[] nodes = new node_info[size];
         V.toArray(nodes); // O(n) operation
         int[] ans = new int[size];

@@ -1,10 +1,7 @@
 package ex1;
 
 import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class WGraph_DS4 extends WGraphBasics {
     private class Node implements node_info, Serializable{
@@ -52,7 +49,8 @@ public class WGraph_DS4 extends WGraphBasics {
             if(tKey == getKey()){
                 return;
             }
-
+            // if the target is valid, we add action,
+            // either we just update the weight, or we create a new edge.
             actionMade++;
             if(edges.containsKey(tKey)){
                 edges.put(tKey, weight);
@@ -74,12 +72,15 @@ public class WGraph_DS4 extends WGraphBasics {
         }
 
         public Collection<node_info> getV(){
-            Collection<node_info> nis = new ArrayDeque<>();
+            // we store neighbours as "Keys" in the set of edges,
+            // so we use those to create an neighbour collection
+            // with is faster then having one before hand ( because it takes twice as many insertions to populate 2 ).
+            Collection<node_info> neighbours = new ArrayList<>();
             Collection<Integer> list = edges.keySet();
-            for (Integer id: list) {
-                nis.add(getNode(id));
+            for (int id : list) {
+                neighbours.add(getNode(id));
             }
-            return nis;
+            return neighbours;
         }
 
         public boolean hasEdge(int neighbour){
@@ -94,7 +95,10 @@ public class WGraph_DS4 extends WGraphBasics {
         }
 
         private void deleteNode(){
-            // its an inner class so i assume its was called properly
+            // we delete the node,
+            // we go over all the neighbours and delete the edge one by one,
+            // we don't use RemoveEdge as it would take twice as many actions.
+            // so we delete it by hand.
             Collection<Integer> keys = new HashSet<>(edges.keySet());
             for (int ni: keys) {
                 nodes.get(ni).edges.remove(key);
@@ -132,6 +136,9 @@ public class WGraph_DS4 extends WGraphBasics {
         }
     }
 
+    // this is the fastest implementation i've made, the Node is responsible,
+    // for handling edges, with means the graph only saves the nodes.
+
     private HashMap<Integer,Node> nodes;
     private int actionMade;
     private int edgeNum;
@@ -142,6 +149,7 @@ public class WGraph_DS4 extends WGraphBasics {
 
     public WGraph_DS4(weighted_graph graph){
         super(graph);
+        // the copy graph is implemented in an abstract class.
     }
 
     @Override

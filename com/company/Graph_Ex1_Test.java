@@ -13,13 +13,16 @@ import java.util.Random;
 public class Graph_Ex1_Test {
     static int seed = 31;
     static Random _rnd = new Random(seed);
-    static int v_size = 300000;
+    static int v_size = 100000;
     static int e_size = (int)(v_size * 10);
     static weighted_graph g0 = new WGraph_DS(), g1;
     static weighted_graph_algorithms ga;
+
     public static void main(String[] args) {
+        //generateWeightData();
         MyTimer.Start();
         MyTimer.Start(1);
+        //test1();
         test1();
         System.out.println(g0);
         MyTimer.printTimeElapsed("init");
@@ -30,11 +33,13 @@ public class Graph_Ex1_Test {
         //test4(new int[]{1, 424, 523, 140, 338, 299, 798, 9});
         MyTimer.printTimeElapsed(1,"total");
     }
+
     public static void test1() {
         for(int i=0;i<v_size;i++) {
             node_data n = new NodeData();
             g0.addNode(n.getKey());
         }
+
         int j = 0;
         while(g0.edgeSize() < e_size && j < e_size * 10) {
             int a = nextRnd(0,v_size);

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class WGraph_DS3 extends WGraphBasics {
+    // this is not used by essentially its the same as DS4.
+
     private class Node implements node_info, Serializable {
         private int key;
         private transient String info = "";
