@@ -10,25 +10,25 @@ are all given files.
 
 Heap
  - Heap implementation made because java PriorityQueue is not good enough
-
+---------
 INode
  - an interface that add extra spice to the Heap optimization.
-
+---------
 WGraph_Algo
  - implements weighted_graph_algorithms and does all the stuff it needs.
-
+---------
 WGraph_DS
  - extends WGraph_DS4, or WGraph_DS3, both work great, but for testing its convenient to extend them. (instead of refactoring)
-
+--------
 WGraph_DS3
  - implements weighted_graph it used Hash<Hash>> to store edges, and that the main difference.
-
+---------
 WGraph_DS4
  - implements weighted_graph it used Hash of edges inside the nodes, and that the main difference.
-
+---------
 WGraphBasics
  - an abstract class, it just implements the "deep copy", function for both DS3, and DS4.
- 
+ ---------
 WPathNode
  - node class that impl
 
